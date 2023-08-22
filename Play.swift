@@ -13,7 +13,7 @@ class Play: SKScene {
     var jumpSpeed:CGFloat=0
     
     let block=SKSpriteNode.init(color: UIColor.black, size: CGSize(width: 100, height: 100))
-    let block2=SKSpriteNode.init(color: UIColor.blue, size: CGSize(width: 100, height: 100))
+    var boneCatched=false
     let bone0=SKTexture.init(imageNamed: "bone0")
     let bone1=SKTexture.init(imageNamed: "bone1")
     let bone2=SKTexture.init(imageNamed: "bone2")
@@ -29,6 +29,7 @@ class Play: SKScene {
     let crystal5=SKTexture.init(imageNamed:"obCrystal5")
     let crystal6=SKTexture.init(imageNamed:"obCrystal6")
     let crystal7=SKTexture.init(imageNamed:"obCrystal7")
+    var laserCatched=false          //create and initial no laser gun
     
     let bird=SKSpriteNode(imageNamed: "obCrystal0")
     let explosion=SKSpriteNode(imageNamed: "explosion1")
@@ -48,7 +49,7 @@ class Play: SKScene {
     var speedIndex:CGFloat=0.98     //create speed Index for speed increasing
     var collided=false               //create a bool for determining collission
     var lifes=1                    //create and intial life of 1
-    var laserCatched=false          //create and initial no laser gun
+    
     var fail=false               //create and initial not fail game
     var mark=0                  //create a int variable recording mark
     let transparency=SKTexture.init(imageNamed: "transparent")           //create a transparent background for hidden image
@@ -71,20 +72,7 @@ class Play: SKScene {
         block.position.x=size.width+block.size.width/2+randomTime
         block.position.y=frame.height/2 - 80
     }
-    func reLocateBlock2() -> Void {
-        let boneArray=[bone0,bone1,bone2,bone3,bone4,bone5]
-        let index=Int(arc4random_uniform(UInt32(6)))
-        block2.texture=boneArray[index]
-        randomTime2=CGFloat((arc4random_uniform(500)))+500
-        block2.position.x=block.position.x+randomTime2
-        if block2.position.x<size.width{
-            //if the distance is too small that it isn't out of the screen
-            block2.position.x=size.width+randomTime2+0.5*block2.size.width
-            //make it bigger
-        }
-        block2.size = CGSize(width: self.size.width/7, height: self.size.height/6)
-        block2.position.y = frame.height/2 - 80
-    }
+   
     func relocateLaserGun() -> Void{
         let crystalArray=[crystal1,crystal2,crystal3,crystal4,crystal5,crystal6,crystal7]
         let index=Int(arc4random_uniform(UInt32(7)))
@@ -120,7 +108,13 @@ class Play: SKScene {
         
         let front = SKTexture.init(imageNamed: "player-front0")
         person.texture=front
-        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 4){
+            self.person.run(SKAction.repeatForever(self.WaveAction(x:self.runningSpeed)), withKey: "waving") //start waving
+        }
+        //Timer(timeInterval: 4.0, repeats: true, block: WaveAction(x: runningSpeed) -> Void)
+       /* _ = Timer.scheduledTimer(withTimeInterval: 4.0, repeats: true) { timer2 in
+            self.WaveAction(x: self.runningSpeed)
+        }*/
         
         let result = SKLabelNode(fontNamed: "Chalkduster")
         result.text = "Game Over!"
@@ -197,11 +191,7 @@ class Play: SKScene {
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.8){
             self.person.position.y=self.size.height+self.person.frame.height/2
             self.person.run(SKAction.moveTo(y: 0.5*self.person.frame.height, duration: 1.2))
-            //make the person drop from the air
-            self.reLocateBlock()
-            self.reLocateBlock2()
             self.reLocateBird()
-            //relocate all objects
             
         }
         DispatchQueue.main.asyncAfter(deadline: .now() + 3){
@@ -215,30 +205,19 @@ class Play: SKScene {
         let minX=bird.position.x-bird.frame.width/2
         let maxX=bird.position.x+bird.frame.width/2
         let LocX=bird.position.x
-        let LocY=bird.position.y
-        //set the four sides location of the bird and its location
+        let LocY=bird.position.y                                //set the four sides location of the bird and its location
         let gunCheckPoint=person.position.y+15
-        if minX>90 && maxX<frame.size.width{
-            //when the bird is in the screen
-            if gunCheckPoint>minY && gunCheckPoint<maxY{
-                //when the laser meets bird
-                explosion.run(explosionAction())
-                //do explosion
-                explosion.position=CGPoint(x:LocX,y:LocY)
-                //set it to the bird position
-                explosion.run(birdSound)
-                //do the explosion sound
-                reLocateBird()
-                //relocate the bird
+        if minX>90 && maxX<frame.size.width{                   //when the bird is in the screen
+            if gunCheckPoint>minY && gunCheckPoint<maxY{        //when the laser meets bird
+                explosion.run(explosionAction())                //do explosion
+                explosion.position=CGPoint(x:LocX,y:LocY)       //set it to the bird position
+                explosion.run(birdSound)                        //do the explosion sound
+                reLocateBird()                                  //relocate the bird
                 mark+=5
                 markPlus(score: 5)
-                //add the mark and display it
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.72){
-                    //after the animation compelets
-                    self.explosion.position=CGPoint(x:2*self.frame.size.width,y:self.person.position.y+15)
-                    //explosion goes away
+                    self.explosion.position=CGPoint(x:2*self.frame.size.width,y:self.person.position.y+15)   //explosion goes away
                 }
-                
             }
         }
     }
@@ -251,9 +230,19 @@ class Play: SKScene {
         let run5 = SKTexture.init(imageNamed: "running5")
         let run6 = SKTexture.init(imageNamed: "running6")
         let run7 = SKTexture.init(imageNamed: "running7")
-        let runningArray=[run1,run2,run3,run4,run5,run6,run7]
+        let run8 = SKTexture.init(imageNamed: "running8")
+        let runningArray=[run1,run2,run3,run4,run5,run6,run7,run8]
         let runningAnimation = SKAction.animate(with: runningArray, timePerFrame: x)
         return runningAnimation
+    }
+    func WaveAction(x:Double) -> SKAction {
+        let playerwave1 = SKTexture(imageNamed: "player-wave1")
+        let playerwave2 = SKTexture(imageNamed: "player-wave2")
+        let playerwave0 = SKTexture(imageNamed: "player-wave0")
+        let playerfront0 = SKTexture(imageNamed: "player-front0")
+        let waveArray=[playerwave0, playerwave1, playerwave2, playerwave1, playerwave0, playerfront0]
+        let waveAnimation = SKAction.animate(with: waveArray, timePerFrame: x)
+        return waveAnimation
     }
     func laserAction(x:Double) -> SKAction {
         let laser1 = SKTexture.init(imageNamed: "laser1")
@@ -262,10 +251,8 @@ class Play: SKScene {
         let laser4 = SKTexture.init(imageNamed: "laser4")
         let laser5 = SKTexture.init(imageNamed: "laser5")
         let laser6 = SKTexture.init(imageNamed: "laser6")
-        let laser7 = SKTexture.init(imageNamed: "laser7")
-        //create 7 textures to store the animation for laser running
-        let laserArray=[laser1,laser2,laser3,laser4,laser5,laser6,laser7]
-        //create an array representing the animation
+        let laser7 = SKTexture.init(imageNamed: "laser7")   //create 7 textures to store the animation for laser running
+        let laserArray=[laser1,laser2,laser3,laser4,laser5,laser6,laser7]   //create an array representing the animation
         let laserAnimation=SKAction.animate(with: laserArray,
                                             timePerFrame: x)
         return laserAnimation
@@ -286,15 +273,12 @@ class Play: SKScene {
         let boom9=SKTexture.init(imageNamed: "explosion9")
         let boom10=SKTexture.init(imageNamed: "explosion10")
         let boom11=SKTexture.init(imageNamed: "explosion11")
-        let boom12=SKTexture.init(imageNamed: "explosion12")
-        //create 12 textures for the animation of boom
-        let boomArray=[boom1,boom2,boom3,boom4,boom5,boom6,boom7,boom8,boom9,boom10,boom11,boom12]
-        //create an array representing the animation
-        let boomAnimation=SKAction.animate(with: boomArray, timePerFrame: 0.06)
-        //create an action of animation
+        let boom12=SKTexture.init(imageNamed: "explosion12")      //create 12 textures for the animation of boom
+        let boomArray=[boom1,boom2,boom3,boom4,boom5,boom6,boom7,boom8,boom9,boom10,boom11,boom12]  //create an array representing the animation
+        let boomAnimation=SKAction.animate(with: boomArray, timePerFrame: 0.06) //create an action of animation
         return boomAnimation
     }
-    func jumpSuccess(posXman:CGFloat,posYman:CGFloat,posXbox:CGFloat,widthBox:CGFloat, heightBox:CGFloat) -> Bool? {
+    /*func jumpSuccess(posXman:CGFloat,posYman:CGFloat,posXbox:CGFloat,widthBox:CGFloat, heightBox:CGFloat) -> Bool? {
         let minX=posXbox-0.5*widthBox
         let maxX=posXbox+0.5*widthBox
         let checkPoint=posYman-48
@@ -322,7 +306,7 @@ class Play: SKScene {
             return true
         }
         return true
-    }
+    }*/
     func checkIfLaser(object: SKSpriteNode) -> Bool {
         let HeightBottom=object.position.y-0.5*laserGun.size.height   //find the value of the bottom of laser item
         let Left=object.position.x-0.5*laserGun.size.width    //find the value of the left side of laser item
@@ -348,7 +332,6 @@ class Play: SKScene {
                 //meet from heat
                 if gun{
                     person.run(laserGunLoadedSound)
-                    
                 }else{
                     person.run(lifeGotSound)
                 }
@@ -370,6 +353,38 @@ class Play: SKScene {
         return false
     }
     
+    func checkIfBone(object: SKSpriteNode) -> Bool {
+        let HeightBottom=object.position.y-0.5*block.size.height   //find the value of the bottom of laser item
+        let Left=object.position.x-0.5*block.size.width    //find the value of the left side of laser item
+        let Right=object.position.x+0.5*block.size.width    //find the value of the right side of laser item
+        let HeightTop=object.position.y+0.5*block.size.height   //find the value of the top of laser item
+        let personTop=person.position.y+43     //find the value of the top of stickman
+        let personBottom=person.position.y-48  //find the value of the bottom of stickman
+        let personRight=person.position.x+47   //find the right side of the stickman
+        let collide=personRight>Left&&Right>50    //see if x location meets
+        let bone=(object==block)   //check if it is heart or gun
+        if collide{
+            //if their x loc meet
+            if personBottom<HeightTop&&personBottom>HeightBottom{       //if it meets from foot
+                if bone{ person.run(laserGunLoadedSound)
+                }else{ person.run(lifeGotSound)
+                }
+                return true
+            } else if personTop>HeightBottom&&personTop<HeightTop{      //meet from heat
+                if bone{ person.run(laserGunLoadedSound)
+                }else{ person.run(lifeGotSound)}
+
+                return true
+            } else if personTop>HeightTop&&personBottom<HeightBottom{    //meet through middle
+                if bone{ person.run(laserGunLoadedSound)
+                }else{ person.run(lifeGotSound)}
+                return true
+            }
+        }
+        return false
+    }
+
+    
     override func didMove(to view: SKView) {
         backgroundImage.name = "bgMoving"
         backgroundImage.position = CGPointMake(self.frame.minX+7500, self.frame.midY)
@@ -379,21 +394,18 @@ class Play: SKScene {
         endBackgroundPosition = CGFloat(-17165.0 + self.frame.width)
         
         person.setScale(0.4)
-        person.position=CGPoint(x:0.5*person.frame.width + 100, y:frame.height/2 - 10) //5.0*person.frame.height)
+        person.position=CGPoint(x:0.5*person.frame.width + 100, y:frame.height/2 + 20) //5.0*person.frame.height)
         person.run(SKAction.repeatForever(RunningAction(x: runningSpeed)), withKey:"running")
         addChild(person)
         
         reLocateBlock()
-        reLocateBlock2()
         block.position=CGPoint(x:0.5*size.width,y:0.5*block.frame.height)
         addChild(block)
-        block2.position=CGPoint(x:0.5*size.width,y:0.5*block.frame.height)
-        addChild(block2)
+        
         relocateLaserGun()
         addChild(laserGun)
         
         relocateHeart()
-        
         reLocateBird()
         bird.run(SKAction.repeatForever(BirdAction(x: 0.05)), withKey:"bird")
         addChild(bird)
@@ -404,10 +416,13 @@ class Play: SKScene {
         explosion.position=CGPoint(x:2*frame.size.width,y:person.position.y+15)
         addChild(explosion)
         addChild(heart)
-        smallHeart.position=CGPoint(x:0.7*smallHeart.size.width, y:frame.size.height-0.75*smallHeart.size.height)
-        smallHeart2.position=CGPoint(x:1.3*smallHeart.size.width, y:frame.size.height-0.75*smallHeart.size.height)
-        smallHeart3.position=CGPoint(x:1.9*smallHeart.size.width, y:frame.size.height-0.75*smallHeart.size.height)
+        smallHeart.position=CGPoint(x:0.5*smallHeart.size.width, y:frame.size.height-0.5*smallHeart.size.height)
+        smallHeart2.position=CGPoint(x:1.1*smallHeart.size.width, y:frame.size.height-0.5*smallHeart.size.height)
+        smallHeart3.position=CGPoint(x:1.7*smallHeart.size.width, y:frame.size.height-0.5*smallHeart.size.height)
         //define positions of the hearts to top left.
+        smallHeart.setScale(0.5)
+        smallHeart2.setScale(0.5)
+        smallHeart3.setScale(0.5)
         addChild(smallHeart)
         addChild(smallHeart2)
         addChild(smallHeart3)
@@ -439,15 +454,15 @@ class Play: SKScene {
         guard !collided && !fail else {
             return
         }
-            //bird.removeAction(forKey: "bird")
-            //bird.run(explosionAction())
+            bird.removeAction(forKey: "bird")
+            bird.run(explosionAction())
             let dilation=frame.size.height/414.0  //use the height of frame to declare proper speed figure
-            if person.position.y == 0.5*self.person.frame.height - 10 {  // if the person is at the ground
+            if person.position.y == 0.5*self.person.frame.height + 20 {  // if the person is at the ground
                 jumpSpeed = -18*dilation  //the speed of elevation is 18
                 person.removeAction(forKey: "running") //stop the animation when in the air
-                if laserCatched{
-                    /*let run5 = SKTexture.init(imageNamed: "laser5")
-                    person.texture=run5*/
+                if boneCatched{
+                    let run5 = SKTexture.init(imageNamed: "laser5")
+                    person.texture=run5
                     LaserAppear() //set laser following the person
                 } else{
                     //when it is just running
@@ -481,7 +496,6 @@ class Play: SKScene {
         
         //move blocks
         block.position.x-=blockSpeed
-        block2.position.x-=blockSpeed
         
         if block.position.x < -block.size.width/2{  //block passes the screen
             reLocateBlock() //relocate
@@ -493,40 +507,24 @@ class Play: SKScene {
             }
         }
 
-        if block2.position.x < -block2.size.width/2{ //block2 passes
-            reLocateBlock2() //relocate
-            mark+=1  //add mark if it passes the block2
-            markPlus(score: 1)  //display the mark increase
-            if blockSpeed<12{
-                runningSpeed=runningSpeed*Double(speedIndex)     // blockSpeed=blockSpeed/speedIndex
-                birdSpeed=birdSpeed/speedIndex //increase speed of all objects only when blockSpeed<12
-            }
-        }
-
-        if person.position.y < 0.5*person.frame.height - 10 {    //if the person is on the ground
-            person.position.y=0.5*person.frame.height - 10      //don't let it go down, which will go out of bound.
+        if person.position.y < 0.5*person.frame.height + 20 {    //if the person is on the ground
+            person.position.y=0.5*person.frame.height + 20      //don't let it go down, which will go out of bound.
             LaserDisappear()                                    //disappear the laser //remove sound
         }
         if laserShot.position.y < 65.0 {
-            laserShot.position.y = 65.0
-            //make laser shot on the ground
+            laserShot.position.y = 65.0         //make laser shot on the ground
         }
         
-        if jumpSpeed>0 && /*person.position.y<0.7*person.frame.height &&*/ 0.5*person.frame.height - 10<person.position.y {
+        if jumpSpeed>0 && /*person.position.y<0.7*person.frame.height &&*/ 0.5*person.frame.height + 20<person.position.y {
             //when it lands
-            if laserCatched{   //if it is carrying a laser gun
+            if boneCatched{   //if it is carrying a laser gun
                 person.run(SKAction.repeatForever(laserAction(x: runningSpeed)), withKey:"running")
                 //start the laser running animation again when landed
-                if laserGun.position.x < 1.3*size.width{
-                    //when the new laser gun is comming
-                    person.run(SKAction.repeatForever(RunningAction(x: runningSpeed)), withKey:"1")
-                    //the running animation swtiches back to regular
+                if laserGun.position.x < 1.3*size.width{    //when the new laser gun is comming
+                    person.run(SKAction.repeatForever(RunningAction(x: runningSpeed)), withKey:"1") //the running animation swtiches back to regular
                     let run5 = SKTexture.init(imageNamed: "run5")
-                    //create a sktexture in laser mode
                     person.texture=run5
-                    //let the new image be the picture of the stick man when he is in the air.
-                    laserCatched=false
-                    //laser gun dismissed
+                    boneCatched=false
                 }
             }else{
                 person.run(SKAction.repeatForever(RunningAction(x: runningSpeed)), withKey:"running")
@@ -543,30 +541,9 @@ class Play: SKScene {
             
         }
         
-        if jumpSuccess(posXman: person.position.x, posYman: person.position.y, posXbox: block.position.x, widthBox: block.size.width, heightBox: block.size.height) == false{
-            //check when collided with block1
-            collided=true
-            collideResult()
-            //runcollided function and change collided to false
-            laserCatched=false
-            //the laserGun dismissed
-        }
-        
-        if jumpSuccess(posXman: person.position.x, posYman: person.position.y, posXbox: block2.position.x, widthBox: block2.size.width, heightBox: block2.size.height) == false{
-            //check when collided with block1
-            collided=true
-            collideResult()
-            //runcollided function and change collided to false
-            laserCatched=false
-            //the laserGun dismissed
-        }
- 
-        bird.position.x-=birdSpeed
-        //the bird moves by birdSpeed everytime to left
-        if bird.position.x < -bird.size.width/2{
-            //if it is outside the screen
+        bird.position.x-=birdSpeed                   //the bird moves by birdSpeed everytime to left
+        if bird.position.x < -bird.size.width/2{     //if it is outside the screen
             reLocateBird()
-            //relocate it
         }
         laserGun.position.x-=birdSpeed
         //the laserGun moves by birdSpeed everytime to left
@@ -575,36 +552,43 @@ class Play: SKScene {
             relocateLaserGun()
             //relocate it
         }
-        if checkIfLaser(object:laserGun){
+        if checkIfLaser(object:block){
             let run5 = SKTexture.init(imageNamed: "laser5")
-            //create a sktexture in laser mode
             person.texture=run5
             //let the new image be the picture of the stick man when he is in the air.
-            laserCatched=true
+            boneCatched=true
+            reLocateBlock()
+            //hitTheBird()
+            LaserAppear()   //create the laser shot when in the sky
+        }
+        if checkIfLaser(object:bird){
+            collided=true
+            collideResult()
+            laserCatched=false
+            lifes-=1
+            if lifes<=0{  //when no life
+                fail=true  //failed the game
+                ifFail() //run function for fail condition
+            }
+            else{
+                smallHeartArray[lifes].position.y=2*frame.size.height  //one heart disappears
+            }
+        }
+            
+        if checkIfLaser(object:laserGun){
+            mark += 1
             relocateLaserGun()
-            LaserAppear()
-            //create the laser shot when in the sky
-
         }
-        if laserCatched{
-        hitTheBird()
-            //run hit bird function when carrying a gun
-        }
-        if checkIfLaser(object:heart){
-            //detect the collision between heart and person
-            if lifes<=2{
-                //when it doesn't have more lifes than2
+        if checkIfLaser(object:heart){               //detect the collision between heart and person
+            if lifes<=2{                                 //when it doesn't have more lifes than2
             lifes+=1
-            smallHeartArray[lifes-1].position.y=frame.size.height-0.75*smallHeart.size.height
-                //give him a life
+            smallHeartArray[lifes-1].position.y=frame.size.height-0.75*smallHeart.size.height//give him a life
             }
             relocateHeart()
             //relocate teh heart to let it come again
         }
         //check if the bird is hit
-        heart.position.x-=birdSpeed
-        //move the heart
-        marklbl.text=String(mark)
-        //refresh mark
+        heart.position.x-=birdSpeed     //move the heart
+        marklbl.text=String(mark)       //refresh mark
     }
 }
