@@ -11,6 +11,8 @@ class Play: SKScene {
     let person=SKSpriteNode(imageNamed: "1")
     var runningSpeed=0.1
     var jumpSpeed:CGFloat=0
+    var blockSpeed:CGFloat = 2
+    var birdSpeed:CGFloat=2.5
     
     let block=SKSpriteNode.init(color: UIColor.black, size: CGSize(width: 100, height: 100))
     var boneCatched=false
@@ -45,27 +47,27 @@ class Play: SKScene {
     let smallHeart2=SKSpriteNode(imageNamed:"heartMark")
     let smallHeart3=SKSpriteNode(imageNamed:"heartMark")
     //create 3 small hearts representing the lifes
-    var blockSpeed:CGFloat = 2
-    var birdSpeed:CGFloat=2.5
+    let smallCryst=SKSpriteNode(imageNamed:"obCrystal2")
     
     var randomTime:CGFloat=0
     var randomTime2:CGFloat=0
     
     var speedIndex:CGFloat=0.98     //create speed Index for speed increasing
     var collided=false               //create a bool for determining collission
-    var lifes=3                    //create and intial life of 1
+    var lifes=1                    //create and intial life of 1
     
     var fail=false               //create and initial not fail game
     var mark=0                  //create a int variable recording mark
     let transparency=SKTexture.init(imageNamed: "transparent")           //create a transparent background for hidden image
     let heartPic=SKTexture.init(imageNamed: "heartMark")                 //create heart for adding life
-    let marklbl = SKLabelNode(fontNamed: "Papyrus")                     //create the label for displaying the mark
-    let markPluslbl = SKLabelNode(fontNamed: "Papyrus")                  //create the label for displaying the mark
+    //let crystPic=SKTexture.init(imageNamed: "obCrystal2")
+    let marklbl = SKLabelNode(fontNamed: "Chalkduster")                     //create the label for displaying the mark
+    let markPluslbl = SKLabelNode(fontNamed: "Chalkduster")                  //create the label for displaying the mark
     
     let birdSound=SKAction.playSoundFileNamed("birdExplode.mp3", waitForCompletion: true)
     let laserGunLoadedSound=SKAction.playSoundFileNamed("laserGunSound.mp3", waitForCompletion: true)
     let lifeGotSound=SKAction.playSoundFileNamed("lifeSound.mp3", waitForCompletion: true)
-    let backGrMusic=SKAudioNode(fileNamed:"background.mp3")
+    let backGrMusic=SKAudioNode(fileNamed:"forest1.mp3")
     let shooting=SKAudioNode(fileNamed:"shotSound.mp3")
     
     func reLocateBlock() -> Void{
@@ -73,7 +75,7 @@ class Play: SKScene {
         let index=Int(arc4random_uniform(UInt32(6)))
         block.texture=boneArray[index]
         randomTime=CGFloat((arc4random_uniform(500)))+500
-        block.size = CGSize(width: self.size.width/7, height: self.size.height/6)
+        block.size = CGSize(width: self.size.width/9, height: self.size.height/7)
         block.position.x=size.width+block.size.width/2+randomTime
         block.position.y=frame.height/2 - 80
     }
@@ -134,12 +136,12 @@ class Play: SKScene {
     func LaserAppear() -> Void{
         let jump0 = SKTexture.init(imageNamed: "player-jump-bone0")
         let jump1 = SKTexture.init(imageNamed: "player-jump-bone1")
-        let jump3 = SKAction.moveTo(y: 200, duration: 0.5)
-        let jump4 = SKAction.move(to: CGPoint(x:0.5*person.frame.width + 100, y:frame.height/2 + 20), duration: 0.5)
-        let sequence = SKAction.sequence([jump3, jump4])
-        person.run(sequence)
+        let jump3 = SKAction.moveTo(y: frame.height/2 + 40, duration: 0.4)
+        //let jump4 = SKAction.move(to: CGPoint(x:0.5*person.frame.width + 100, y:frame.height/2 + 20), duration: 0.05)
+        //let sequence = SKAction.sequence([jump3, jump4])
+        person.run(jump3)
         let runningArray=[jump0,jump1,jump0,jump1,jump0,jump1]
-        let runningAnimation = SKAction.animate(with: runningArray, timePerFrame: 0.3)
+        let runningAnimation = SKAction.animate(with: runningArray, timePerFrame: 0.1)
         person.run(runningAnimation)
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 3.0){ [self] in
@@ -147,9 +149,7 @@ class Play: SKScene {
             laserGun.alpha = 1.0
             laserShots = 3
             laserGun.position=CGPoint(x: person.position.x + 100, y:0)
-            if !fail{
-                shooting.run(SKAction.play())
-            }
+            
             if laserShots <= 0 {
                 LaserDisappear()
             }
@@ -196,7 +196,6 @@ class Play: SKScene {
             reLocateBird()
         }
     }
-    
     func collideResult() ->  Void{
         let posture=person.texture!   //posture change to normal, no laser gun
         let transparency=SKTexture.init(imageNamed: "transparent")   //texture for completing blink
@@ -220,19 +219,6 @@ class Play: SKScene {
             self.person.run(SKAction.repeatForever(self.RunningAction(x:self.runningSpeed)), withKey: "running") //start running
         }
     }
-    func hitTheBird() -> Void{
-        bird.removeAction(forKey: "bird")
-        explosion.run(explosionAction())
-        explosion.position=bird.position
-        explosion.run(birdSound)
-        reLocateBird()
-        mark+=5
-        markPlus(score: 5)
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.72){
-                    self.explosion.position=CGPoint(x:2*self.frame.size.width,y:self.person.position.y+15)   //explosion goes away
-                }
-    }
-    
     func RunningAction(x:Double) -> SKAction {
         let run1 = SKTexture.init(imageNamed: "1")
         let run2 = SKTexture.init(imageNamed: "running2")
@@ -328,21 +314,21 @@ class Play: SKScene {
         let collide=personRight>Left&&Right>50    //see if x location meets
         let gun=(object==crystal)   //check if it is heart or gun
         if collide{
-            //if their x loc meet
+           /* //if their x loc meet
             if personBottom<HeightTop&&personBottom>HeightBottom{ //meets bottom
-                if gun{ person.run(laserGunLoadedSound)
+                if gun{ person.run(lifeGotSound)
                 }else{ person.run(lifeGotSound) }
                 return true
             } else if personTop>HeightBottom&&personTop<HeightTop{ // meets upon
-                if gun{ person.run(laserGunLoadedSound)
+                if gun{ person.run(lifeGotSound)
                 }else{  person.run(lifeGotSound)}
                 return true
             } else if personTop>HeightTop&&personBottom<HeightBottom{   //meet through middle
-                if gun{ person.run(laserGunLoadedSound)
+                if gun{ person.run(lifeGotSound)
                 }else{  person.run(lifeGotSound)}
                 return true
-            }
-            
+            }*/
+            return true
         }
         return false
     }
@@ -358,7 +344,8 @@ class Play: SKScene {
         let collide=personRight>Left&&Right>50    //see if x location meets
         let bone=(object==laserGun)
         if collide {
-            //if their x loc meet
+           // shooting.run(SKAction.play())
+            /*//if their x loc meet
             if personBottom<HeightTop&&personBottom>HeightBottom {       //if it meets from foot
                 if bone{ laserGun.run(laserGunLoadedSound)
                 }else{ laserGun.run(lifeGotSound)}
@@ -371,11 +358,23 @@ class Play: SKScene {
                 if bone{ laserGun.run(laserGunLoadedSound)
                 }else{ laserGun.run(lifeGotSound)}
                 return true
-            }
+            }*/
+            return true
         }
         return false
     }
-
+    func hitTheBird() -> Void{
+        bird.removeAction(forKey: "bird")
+        explosion.run(explosionAction())
+        explosion.position=bird.position
+        explosion.run(birdSound)
+        reLocateBird()
+        mark+=5
+        markPlus(score: 5)
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.72){
+                    self.explosion.position=CGPoint(x:2*self.frame.size.width,y:self.person.position.y+15)   //explosion goes away
+                }
+    }
     
     override func didMove(to view: SKView) {
         backgroundImage.name = "bgMoving"
@@ -416,9 +415,9 @@ class Play: SKScene {
         explosion.position=CGPoint(x:2*frame.size.width,y:person.position.y+15)
         addChild(explosion)
         addChild(heart)
-        smallHeart.position=CGPoint(x:0.5*smallHeart.size.width, y:frame.size.height-0.5*smallHeart.size.height)
-        smallHeart2.position=CGPoint(x:1.1*smallHeart.size.width, y:frame.size.height-0.5*smallHeart.size.height)
-        smallHeart3.position=CGPoint(x:1.7*smallHeart.size.width, y:frame.size.height-0.5*smallHeart.size.height)
+        smallHeart.position=CGPoint(x:50, y:frame.size.height-50)
+        smallHeart2.position=CGPoint(x:100, y:frame.size.height-50)
+        smallHeart3.position=CGPoint(x:150, y:frame.size.height-50)
         //define positions of the hearts to top left.
         smallHeart.setScale(0.5)
         smallHeart2.setScale(0.5)
@@ -429,51 +428,41 @@ class Play: SKScene {
         smallHeart2.position.y=2*frame.size.height
         smallHeart3.position.y=2*frame.size.height
         //put the 2 after hearts to disappear
+        smallCryst.setScale(0.1)
+        smallCryst.position=CGPoint(x:50, y:frame.size.height-100)
+        addChild(smallCryst)
         marklbl.text = String(mark)
         marklbl.fontSize = 30
         marklbl.fontColor = SKColor.black
-        marklbl.position = CGPoint(x: frame.midX, y: frame.size.height-30)
+        marklbl.position = CGPoint(x:100, y:frame.size.height-120)
         addChild(marklbl)
-        //display the mark
+     
         markPluslbl.text="+5"
-        //display the increased mark number
         markPluslbl.fontColor = SKColor.black
-        self.markPluslbl.position.y=self.markPluslbl.frame.height+self.frame.size.height
-        //set location of markplus out of screen first
+        self.markPluslbl.position = CGPoint(x:marklbl.position.x + 50, y:marklbl.position.y)
+        
         addChild(markPluslbl)
         addChild(backGrMusic)
         addChild(shooting)
-        
-        
         
     }
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         guard !collided && !fail else {
             return
         }
-           // bird.removeAction(forKey: "bird")
-            // bird.run(explosionAction())
             let dilation=frame.size.height/414.0  //use the height of frame to declare proper speed figure
             if person.position.y == 0.5*self.person.frame.height + 20 {  // if the person is at the ground
                 jumpSpeed = -18*dilation  //the speed of elevation is 18
                 person.removeAction(forKey: "running") //stop the animation when in the air
-                /*if boneCatched{
-                    let run5 = SKTexture.init(imageNamed: "laser5")
-                    person.texture=run5
-                    LaserAppear()
-                    laserShots -= 1
-                } else{
-                    //just running
-                    let jump = SKTexture.init(imageNamed: "player-jump")
-                    person.texture=jump
-                }*/
             }
+        if laserCatched{
+//            laser schiesen
+        }
     }
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         guard !collided && !fail else {
             return
         }
-        //only when not collided or ended
         let dilation=frame.size.height/414.0  //use the height of frame to declare proper speed figure
         if jumpSpeed < -10*dilation{  //if the jumpSpeed is greater than 10
             jumpSpeed = -10*dilation  //lower the jumpSpeed it to 10, in order to make it land quickly
@@ -550,7 +539,7 @@ class Play: SKScene {
             relocateCrystal()
         }
         if checkIfCrystal(object:block){
-            
+            laserGun.run(laserGunLoadedSound)
             boneCatched=true
             LaserAppear()
             reLocateBlock()
@@ -571,6 +560,7 @@ class Play: SKScene {
         }
             
         if checkIfCrystal(object:crystal){
+            person.run(lifeGotSound)
             mark += 1
             relocateCrystal()
             let jump0 = SKTexture.init(imageNamed: "player-jump-crystal0")
@@ -580,6 +570,7 @@ class Play: SKScene {
             person.run(runningAnimation)
         }
         if checkIfCrystal(object:heart){               //detect the collision between heart and person
+            person.run(lifeGotSound)
             if lifes<=2{                                 //when it doesn't have more lifes than2
             lifes+=1
             smallHeartArray[lifes-1].position.y=frame.size.height-0.75*smallHeart.size.height//give him a life
