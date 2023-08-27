@@ -344,7 +344,7 @@ class Play: SKScene {
         let collide=personRight>Left&&Right>50    //see if x location meets
         let bone=(object==laserGun)
         if collide {
-           // shooting.run(SKAction.play())
+//           // shooting.run(SKAction.play())
             /*//if their x loc meet
             if personBottom<HeightTop&&personBottom>HeightBottom {       //if it meets from foot
                 if bone{ laserGun.run(laserGunLoadedSound)
