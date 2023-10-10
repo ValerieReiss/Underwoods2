@@ -74,7 +74,7 @@ class PlayScene: SKScene {
      
         player.position = CGPoint(x: self.frame.midX - 200, y: self.frame.minY + 400)
         self.addChild(player)
-        _ = Timer.scheduledTimer(withTimeInterval: 4.0, repeats: true) { timer2 in
+        _ = Timer.scheduledTimer(withTimeInterval: 8.0, repeats: true) { timer2 in
             self.player.wave()
         }
         
@@ -120,16 +120,13 @@ class PlayScene: SKScene {
         
         createBone()
         
-        if backgroundImage.position.x <= endBackgroundPosition {
+        player.moveRight()
+            
+        let bli = SKAction.moveTo(x: endBackgroundPosition, duration: 110)
+        backgroundImage.run(bli)
+        if backgroundImage.position.x == endBackgroundPosition {
             print("stop ende")
             end()
-        }
-        else {
-            player.moveRight()
-            let bli = SKAction.moveTo(x: backgroundImage.position.x-80, duration: 0.3)
-            bli.timingFunction = {time in return simd_smoothstep(0, 1, time)}
-            backgroundImage.run(bli)
-            zahl = 0
         }
         
     }
@@ -150,57 +147,31 @@ class PlayScene: SKScene {
             
             if (nodeTouched.name == "jump") {
                 if(player.position.y >= 420) {
+                    player.jump()
                     let blub = SKAction.move(to: CGPoint(x: normalPlayerPositionX, y: normalPlayerPositionY), duration: 0.05)
                     player.run(blub)
                 }
                 else
                 {
-                    let bla = SKAction.moveTo(y: player.position.y+200, duration: 0.2)
+                    player.jump()
+                    let bla = SKAction.moveTo(y: player.position.y+300, duration: 0.3)
                     bla.timingFunction = {time in return simd_smoothstep(0, 1, time)}
                     let blub = SKAction.move(to: CGPoint(x: normalPlayerPositionX, y: normalPlayerPositionY), duration: 0.1)
                     blub.timingFunction = {time in return simd_smoothstep(0, 1, time)}
                     let sequence = SKAction.sequence([bla, blub])
                     player.run(sequence)
-                    player.jump()
+                    
                 }
             }
             
             if (nodeTouched.name == "rechts") {
-                
-                if backgroundImage.position.x <= endBackgroundPosition {
-                    print("stop ende")
-                    end()
-                }
-                else {
-                    zahl += 1
-                    if zahl == 1 {
-                        player.runRight()
+                player.runRight()
                         
-                        let bli = SKAction.moveTo(x: backgroundImage.position.x-80, duration: 0.3)
-                        bli.timingFunction = {time in return simd_smoothstep(0, 1, time)}
-                        backgroundImage.run(bli)
-                        zahl = 0
-                    }
-                    /*  else if zahl == 2 {
-                     // if  dt < 0.030
-                     //{
-                     player.runRight()
-                     let bli = SKAction.moveTo(x: backgroundImage.position.x-120, duration: 0.3)
-                     backgroundImage.run(bli)
-                     zahl -= 1
-                     //}
-                     //zahl -= 1
-                     }*/
-                    else { return }
+                let bli = SKAction.moveTo(x: backgroundImage.position.x-200, duration: 0.3)
+                    //bli.timingFunction = {time in return simd_smoothstep(0, 1, time)}
+                backgroundImage.run(bli)
                     
-                    if rightButtonIsPressed == true {
-                        player.runRight()
-                        let bli = SKAction.moveTo(x: backgroundImage.position.x-140, duration: 0.3)
-                        backgroundImage.run(bli)
-                    }
-                }
             }
-            
             
             
             if let n = self.magicStick?.copy() as! SKEmitterNode? {
@@ -210,7 +181,7 @@ class PlayScene: SKScene {
         }
     }
     
-    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?){
+    /*override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?){
         for touch: AnyObject in touches {
             currentTouchPosition = touch.location(in:self)
             let nodeTouched = atPoint(currentTouchPosition)
@@ -220,15 +191,11 @@ class PlayScene: SKScene {
                 self.addChild(n)
             }
             if (nodeTouched.name == "rechts") {
-                if backgroundImage.position.x <= endBackgroundPosition {
-                    print("stop ende")
-                    end()
-                }
-                else{
-                    player.runRight()
-                    let bli = SKAction.moveTo(x: backgroundImage.position.x-140, duration: 0.3)
-                    backgroundImage.run(bli)
-                }
+                
+                player.runRight()
+                let bli = SKAction.moveTo(x: backgroundImage.position.x-200, duration: 0.3)
+                backgroundImage.run(bli)
+                
             }
         }
     }
@@ -239,11 +206,11 @@ class PlayScene: SKScene {
             let nodeTouched = atPoint(currentTouchPosition)
            
             rightButtonIsPressed = false
-            player.normal()
-            player.stopMoving()
+           // player.normal()
+           // player.stopMoving()
             
         }
-    }
+    }*/
      
     func didBegin(_ contact: SKPhysicsContact){
         let contactMask = contact.bodyA.categoryBitMask | contact.bodyB.categoryBitMask

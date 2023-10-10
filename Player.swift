@@ -91,8 +91,10 @@ func runRight(){
 }
     
     func jump(){
-        let action = SKAction.setTexture(SKTexture(imageNamed: "player-jump"), resize: true)
-        run(action)
+        //let action = SKAction.setTexture(SKTexture(imageNamed: "player-jump"), resize: true)
+        let playerjump = SKTexture(imageNamed: "player-jump")
+        let animation = SKAction.animate(with: [playerjump], timePerFrame: 0.4)
+        run(animation)
     }
     
     func normal(){
