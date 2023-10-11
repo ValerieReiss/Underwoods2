@@ -33,8 +33,8 @@ class PlayScene: SKScene {
     var playerBones = 0
     
     private var magicStick : SKEmitterNode?
-    var backgroundImage = SKSpriteNode(imageNamed: "bgMoving")
-    
+    //var backgroundImage = SKSpriteNode(imageNamed: "bgMoving")
+    var background = Background()
     var player = Player()
     var lastUpdateTime:TimeInterval = 0
     var dt:TimeInterval = 0
@@ -44,6 +44,7 @@ class PlayScene: SKScene {
     //var currentPlayerPosition: CGPoint = CGPointZero
     var normalPlayerPositionX = 1200
     var normalPlayerPositionY = 400
+    
     var endBackgroundPosition = CGFloat()
     
     var leftButtonIsPressed = false
@@ -65,11 +66,11 @@ class PlayScene: SKScene {
             magicStick.run(SKAction.sequence([SKAction.fadeOut(withDuration: 0.5), SKAction.removeFromParent()]))
         }
         
-        backgroundImage.name = "bgMoving"
-        backgroundImage.position = CGPointMake(self.frame.minX+17165, self.frame.midY) //19560
-        backgroundImage.size = CGSize(width: 34330, height: self.size.height)
-        backgroundImage.zPosition = -1
-        addChild(backgroundImage)
+        //backgroundImage.name = "bgMoving"
+        background.position = CGPointMake(self.frame.minX+17165, self.frame.midY) //19560
+        background.size = CGSize(width: 34330, height: self.size.height)
+        //backgroundImage.zPosition = -1
+        addChild(background)
         endBackgroundPosition = CGFloat(-17165.0 + self.frame.width)
      
         player.position = CGPoint(x: self.frame.midX - 200, y: self.frame.minY + 400)
@@ -121,13 +122,20 @@ class PlayScene: SKScene {
         createBone()
         
         player.moveRight()
+          
+        if zahl == 0 {
             
+            background.move()
+        }
+        else { background.run() }
+        /*
         let bli = SKAction.moveTo(x: endBackgroundPosition, duration: 110)
         backgroundImage.run(bli)
+        
         if backgroundImage.position.x == endBackgroundPosition {
             print("stop ende")
             end()
-        }
+        }*/
         
     }
     
@@ -165,14 +173,15 @@ class PlayScene: SKScene {
             }
             
             if (nodeTouched.name == "rechts") {
+                zahl = 1
                 player.runRight()
-                        
+                background.run()
+                
+                /*
                 let bli = SKAction.moveTo(x: backgroundImage.position.x-200, duration: 0.3)
                     //bli.timingFunction = {time in return simd_smoothstep(0, 1, time)}
-                backgroundImage.run(bli)
-                    
+                backgroundImage.run(bli)*/
             }
-            
             
             if let n = self.magicStick?.copy() as! SKEmitterNode? {
                 n.position = currentTouchPosition
@@ -180,37 +189,6 @@ class PlayScene: SKScene {
             }
         }
     }
-    
-    /*override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?){
-        for touch: AnyObject in touches {
-            currentTouchPosition = touch.location(in:self)
-            let nodeTouched = atPoint(currentTouchPosition)
-          
-            if let n = self.magicStick?.copy() as! SKEmitterNode? {
-                n.position = currentTouchPosition
-                self.addChild(n)
-            }
-            if (nodeTouched.name == "rechts") {
-                
-                player.runRight()
-                let bli = SKAction.moveTo(x: backgroundImage.position.x-200, duration: 0.3)
-                backgroundImage.run(bli)
-                
-            }
-        }
-    }
-    
-    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-        for touch in (touches) {
-            currentTouchPosition = touch.location(in: self)
-            let nodeTouched = atPoint(currentTouchPosition)
-           
-            rightButtonIsPressed = false
-           // player.normal()
-           // player.stopMoving()
-            
-        }
-    }*/
      
     func didBegin(_ contact: SKPhysicsContact){
         let contactMask = contact.bodyA.categoryBitMask | contact.bodyB.categoryBitMask
@@ -232,7 +210,10 @@ class PlayScene: SKScene {
             if lastUpdateTime > 0 {dt = currentTime - lastUpdateTime}
             else {dt = 0}
             lastUpdateTime = currentTime
-    
+        
+            if zahl == 1 { background.run()
+                zahl = 0
+            }
         }
     
             
