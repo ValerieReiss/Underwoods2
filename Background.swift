@@ -39,14 +39,40 @@ class Background: SKSpriteNode{
     }
     
     func move(){
-        let move = SKAction.moveTo(x: self.position.x-200, duration: 0.8)
         
-        run(move)
+        let move = SKAction.moveTo(x: self.position.x-31500, duration: 50)
+         
+         run(move)
+        
+        /*
+        let path = UIBezierPath()
+        path.move(to: .zero)
+        path.addLine(to: CGPoint(x: 100, y: 0))
+        let movement = SKAction.follow(path.cgPath, asOffset: true, orientToPath: true, speed: 0.00001)
+        //let sequence = SKAction.sequence([movement, .removeFromParent()]) //stop or show endpic
+        self.run (movement)
+         */
+        
     }
     
     func run(){
-        let runn = SKAction.moveTo(x: self.position.x-200, duration: 0.3)
-            //bli.timingFunction = {time in return simd_smoothstep(0, 1, time)}
-        run(runn)
+        let runn = SKAction.moveTo(x: self.position.x-400, duration: 0.3)
+        runn.timingFunction = {time in return simd_smoothstep(0, 1, time)}
+        self.run(runn)
     }
+    
+    func endstation() -> Bool{
+        print("\(self.position.x)")
+        
+        let endpunkt = CGPoint(x:-14335, y: 0)
+
+        if(self.position.x <= endpunkt.x){
+               return true
+            }
+        else {
+            return false
+        }
+        }
+
+    
 }

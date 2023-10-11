@@ -33,7 +33,6 @@ class PlayScene: SKScene {
     var playerBones = 0
     
     private var magicStick : SKEmitterNode?
-    //var backgroundImage = SKSpriteNode(imageNamed: "bgMoving")
     var background = Background()
     var player = Player()
     var lastUpdateTime:TimeInterval = 0
@@ -71,7 +70,7 @@ class PlayScene: SKScene {
         background.size = CGSize(width: 34330, height: self.size.height)
         //backgroundImage.zPosition = -1
         addChild(background)
-        endBackgroundPosition = CGFloat(-17165.0 + self.frame.width)
+        endBackgroundPosition =  31500    //CGFloat(-17165.0 + self.frame.width)
      
         player.position = CGPoint(x: self.frame.midX - 200, y: self.frame.minY + 400)
         self.addChild(player)
@@ -123,19 +122,19 @@ class PlayScene: SKScene {
         
         player.moveRight()
           
-        if zahl == 0 {
+        background.move()
+        
+        if background.endstation() == true {
+            end()
+        }
+      
+       /* if zahl == 0 {
             
             background.move()
         }
         else { background.run() }
-        /*
-        let bli = SKAction.moveTo(x: endBackgroundPosition, duration: 110)
-        backgroundImage.run(bli)
         
-        if backgroundImage.position.x == endBackgroundPosition {
-            print("stop ende")
-            end()
-        }*/
+        */
         
     }
     
@@ -211,9 +210,17 @@ class PlayScene: SKScene {
             else {dt = 0}
             lastUpdateTime = currentTime
         
+        if background.endstation() == true {
+            end()
+        }
+        
+        
+        /*
             if zahl == 1 { background.run()
                 zahl = 0
-            }
+            }*/
+        
+        
         }
     
             
@@ -237,8 +244,7 @@ class PlayScene: SKScene {
     func end(){
         
         player.stopMoving()
-        player.normal()
-        print("stop moving")
+        player.won()
         endLabel = SKLabelNode(fontNamed: "Chalkduster")
         endLabel.position = CGPoint(x: self.frame.midX, y: self.frame.midY + 200)
         endLabel.fontSize = 160
