@@ -85,7 +85,7 @@ func runRight(){
         let playerrun1 = SKTexture(imageNamed: "player-run1")
         let playerrun2 = SKTexture(imageNamed: "player-run2")
         let player0 = SKTexture(imageNamed: "player0")
-        let animation = SKAction.animate(with: [playerrun1, player0, playerrun2, player0], timePerFrame: 0.2)
+        let animation = SKAction.animate(with: [playerrun1, player0, playerrun2, player0], timePerFrame: 0.1)
         //let makePlayerRun = SKAction.repeatForever(animation)
         run(animation)
 }

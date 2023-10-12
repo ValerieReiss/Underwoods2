@@ -39,23 +39,15 @@ class Background: SKSpriteNode{
     }
     
     func move(){
-        
        // let move = SKAction.moveTo(x: self.position.x-31500, duration: 50)
         let move = SKAction.moveTo(x: self.position.x-200, duration: 0.5)
-        
-         run(move)
-        
-      
-        
+        run(move)
     }
     
     func run(){
-        print(" vorher \(self.position.x)")
-        let runn = SKAction.moveTo(x: self.position.x-400, duration: 0.3)
-        runn.timingFunction = {time in return simd_smoothstep(0, 1, time)}
+        let runn = SKAction.moveTo(x: self.position.x-500, duration: 0.5)
+        //runn.timingFunction = {time in return simd_smoothstep(0, 1, time)}
         self.run(runn)
-        
-        print("nachher \(self.position.x)")
     }
     
     func endstation() -> Bool{

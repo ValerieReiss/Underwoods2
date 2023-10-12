@@ -19,7 +19,6 @@ enum ColliderType: UInt32 {
     case player = 1
     case bone = 2
     case crystal = 4
-    
 }
 
 class PlayScene: SKScene {
@@ -68,17 +67,22 @@ class PlayScene: SKScene {
         //backgroundImage.name = "bgMoving"
         background.position = CGPointMake(self.frame.minX+17165, self.frame.midY) //19560
         background.size = CGSize(width: 34330, height: self.size.height)
-        //backgroundImage.zPosition = -1
         addChild(background)
-        endBackgroundPosition =  31500    //CGFloat(-17165.0 + self.frame.width)
+        endBackgroundPosition = 17165 //31500    //CGFloat(-17165.0 + self.frame.width)
      
         player.position = CGPoint(x: self.frame.midX - 200, y: self.frame.minY + 400)
         self.addChild(player)
-        _ = Timer.scheduledTimer(withTimeInterval: 8.0, repeats: true) { timer2 in
+        _ = Timer.scheduledTimer(withTimeInterval: 8.2, repeats: true) { timer2 in
+            self.player.wave()
+        }
+        
+        _ = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { timer2 in
             self.player.moveRight()
             self.background.move()
-            self.player.wave()
-            
+        }
+        
+        _ = Timer.scheduledTimer(withTimeInterval: 3.0, repeats: true) { timer2 in
+            self.createBone()
         }
         
         let jump = SKShapeNode(circleOfRadius: 100)
@@ -121,24 +125,10 @@ class PlayScene: SKScene {
         addChild(crystalLabel)
         crystalLabel.text = "\(playerCrystals)"
         
-        createBone()
-        
-        //player.moveRight()
-          
-        //background.move()
-        
         if background.endstation() == true {
             end()
         }
       
-       /* if zahl == 0 {
-            
-            background.move()
-        }
-        else { background.run() }
-        
-        */
-        
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -178,12 +168,7 @@ class PlayScene: SKScene {
                 zahl = 1
                 player.runRight()
                 background.run()
-//lets see if this works
-                //background.position.x -= 400
-                /*
-                let bli = SKAction.moveTo(x: backgroundImage.position.x-200, duration: 0.3)
-                    //bli.timingFunction = {time in return simd_smoothstep(0, 1, time)}
-                backgroundImage.run(bli)*/
+
             }
             
             if let n = self.magicStick?.copy() as! SKEmitterNode? {
@@ -214,18 +199,9 @@ class PlayScene: SKScene {
             else {dt = 0}
             lastUpdateTime = currentTime
         
-        print("\(background.position.x)")
-        
         if background.endstation() == true {
             end()
         }
-        
-        
-        /*
-            if zahl == 1 { background.run()
-                zahl = 0
-            }*/
-        
         
         }
     
@@ -244,7 +220,16 @@ class PlayScene: SKScene {
             bone.physicsBody?.contactTestBitMask = ColliderType.player.rawValue
             bone.physicsBody?.categoryBitMask  = ColliderType.bone.rawValue
             bone.physicsBody?.collisionBitMask = ColliderType.bone.rawValue
+        
+            bone.position = CGPoint(x: Int(self.frame.maxX), y: Int(self.frame.minY) + Int.random(in: 200..<350))
+                
+            let path = UIBezierPath()
+            path.move(to: .zero)
+            path.addLine(to: CGPoint(x:-Int(self.frame.maxX), y: 0))
+            let movement = SKAction.follow(path.cgPath, asOffset: true, orientToPath: true, speed: 70)
+            let sequence = SKAction.sequence([movement, .removeFromParent()])
             addChild(bone)
+            bone.run (sequence)
     }
 
     func end(){
