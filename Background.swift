@@ -40,25 +40,22 @@ class Background: SKSpriteNode{
     
     func move(){
         
-        let move = SKAction.moveTo(x: self.position.x-31500, duration: 50)
-         
+       // let move = SKAction.moveTo(x: self.position.x-31500, duration: 50)
+        let move = SKAction.moveTo(x: self.position.x-200, duration: 0.5)
+        
          run(move)
         
-        /*
-        let path = UIBezierPath()
-        path.move(to: .zero)
-        path.addLine(to: CGPoint(x: 100, y: 0))
-        let movement = SKAction.follow(path.cgPath, asOffset: true, orientToPath: true, speed: 0.00001)
-        //let sequence = SKAction.sequence([movement, .removeFromParent()]) //stop or show endpic
-        self.run (movement)
-         */
+      
         
     }
     
     func run(){
+        print(" vorher \(self.position.x)")
         let runn = SKAction.moveTo(x: self.position.x-400, duration: 0.3)
         runn.timingFunction = {time in return simd_smoothstep(0, 1, time)}
         self.run(runn)
+        
+        print("nachher \(self.position.x)")
     }
     
     func endstation() -> Bool{

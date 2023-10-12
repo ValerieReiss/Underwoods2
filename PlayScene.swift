@@ -75,7 +75,10 @@ class PlayScene: SKScene {
         player.position = CGPoint(x: self.frame.midX - 200, y: self.frame.minY + 400)
         self.addChild(player)
         _ = Timer.scheduledTimer(withTimeInterval: 8.0, repeats: true) { timer2 in
+            self.player.moveRight()
+            self.background.move()
             self.player.wave()
+            
         }
         
         let jump = SKShapeNode(circleOfRadius: 100)
@@ -120,9 +123,9 @@ class PlayScene: SKScene {
         
         createBone()
         
-        player.moveRight()
+        //player.moveRight()
           
-        background.move()
+        //background.move()
         
         if background.endstation() == true {
             end()
@@ -175,7 +178,8 @@ class PlayScene: SKScene {
                 zahl = 1
                 player.runRight()
                 background.run()
-                
+//lets see if this works
+                //background.position.x -= 400
                 /*
                 let bli = SKAction.moveTo(x: backgroundImage.position.x-200, duration: 0.3)
                     //bli.timingFunction = {time in return simd_smoothstep(0, 1, time)}
@@ -209,6 +213,8 @@ class PlayScene: SKScene {
             if lastUpdateTime > 0 {dt = currentTime - lastUpdateTime}
             else {dt = 0}
             lastUpdateTime = currentTime
+        
+        print("\(background.position.x)")
         
         if background.endstation() == true {
             end()
