@@ -7,45 +7,41 @@
 
 import Foundation
 import SpriteKit
-/*
+
 struct PhysicsCategory {
-    //static let None         : UInt32 = 0
-    //static let All          : UInt32 = UInt32.max
     static let player       : UInt32 = 0x1 << 1
-    static let Enemy        : UInt32 = 0x1 << 2
-    static let Star         : UInt32 = 0x1 << 4
-    static let Balloon      : UInt32 = 0x1 << 8
-    static let create1      : UInt32 = 0x1 << 16
-    static let create2      : UInt32 = 0x1 << 32
-    static let create3      : UInt32 = 0x1 << 64
+    static let bone        : UInt32 = 0x1 << 2
+    static let crystal         : UInt32 = 0x1 << 4
+    
 }
-*/
+
+enum ColliderType: UInt32 {
+    case player = 1
+    case bone = 2
+    case crystal = 4
+}
+
 class Player: SKSpriteNode{
 
-init(){
-
+    init(){
     let texture = SKTexture(imageNamed: "player-front0")
-
     super.init(texture: texture, color: UIColor.clear, size: texture.size())
 
-    self.xScale = 1.4
-    self.yScale = 1.4
-    
     self.anchorPoint = CGPoint(x: 0.5, y: 0.5)
     self.zPosition = 5
     
-    
-    let body:SKPhysicsBody = SKPhysicsBody(texture: texture, alphaThreshold: 0, size: texture.size() )
+    let body:SKPhysicsBody = SKPhysicsBody(texture: texture, size: texture.size() )
 
-    
     self.physicsBody = body
     self.physicsBody?.allowsRotation = false
     
     self.physicsBody?.isDynamic = true
     self.physicsBody?.affectedByGravity = true
-    self.physicsBody!.categoryBitMask = ColliderType.player.rawValue
-    self.physicsBody!.collisionBitMask = ColliderType.player.rawValue
-    self.physicsBody!.contactTestBitMask = ColliderType.bone.rawValue | ColliderType.crystal.rawValue
+    self.physicsBody?.categoryBitMask = ColliderType.player.rawValue
+    self.physicsBody?.collisionBitMask = ColliderType.player.rawValue
+    self.physicsBody?.contactTestBitMask = ColliderType.bone.rawValue | ColliderType.crystal.rawValue
+        
+    self.setScale(1.4)
 }
 
 required init?(coder aDecoder: NSCoder) {

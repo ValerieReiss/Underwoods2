@@ -9,12 +9,6 @@ import Foundation
 import SpriteKit
 import simd
 
-enum ColliderType: UInt32 {
-    case player = 1
-    case bone = 2
-    case crystal = 4
-}
-
 class PlayScene: SKScene, SKPhysicsContactDelegate {
 
     var crystalLabel: SKLabelNode!
@@ -29,6 +23,7 @@ class PlayScene: SKScene, SKPhysicsContactDelegate {
     var background = Background()
     var player = Player()
     var bone = Bone()
+    var crystal = Crystal()
     var lastUpdateTime:TimeInterval = 0
     var dt:TimeInterval = 0
     var playableRectArea:CGRect = CGRectZero
@@ -44,7 +39,6 @@ class PlayScene: SKScene, SKPhysicsContactDelegate {
     var rightButtonIsPressed = false
     var zahl = 0
     
-    var randomBone = 0
     let arrayBones = ["obBone0", "obBone1", "obBone2", "obBone3", "obBone4", "obBone5"]
     let arrayCrystals = ["obCrystal0", "obCrystal1", "obCrystal2", "obCrystal3", "obCrystal4", "obCrystal5", "obCrystal6", "obCrystal7"]
     
@@ -76,9 +70,15 @@ class PlayScene: SKScene, SKPhysicsContactDelegate {
             self.background.move()
         }
         
-        _ = Timer.scheduledTimer(withTimeInterval: 5.0, repeats: true) { timer2 in
+        _ = Timer.scheduledTimer(withTimeInterval: 8.0, repeats: true) { timer2 in
+            self.bone.position = CGPoint(x: 2000, y: Int.random(in: 200..<350))
             self.addChild(self.bone)
             self.bone.move()
+        }
+        _ = Timer.scheduledTimer(withTimeInterval: 9.0, repeats: true) { timer2 in
+            self.crystal.position = CGPoint(x: 2000, y: Int.random(in: 1150..<1250))
+            self.addChild(self.crystal)
+            self.crystal.move()
         }
         
         let jump = SKShapeNode(circleOfRadius: 100)

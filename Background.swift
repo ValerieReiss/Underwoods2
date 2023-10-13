@@ -29,9 +29,6 @@ class Background: SKSpriteNode{
         
         self.physicsBody?.isDynamic = true
         self.physicsBody?.affectedByGravity = false
-        //self.physicsBody?.categoryBitMask = PhysicsCategory.Player
-        
-        //self.physicsBody?.contactTestBitMask = ColliderType.bone.rawValue | ColliderType.crystal.rawValue
     }
     
     required init?(coder aDecoder: NSCoder) {
