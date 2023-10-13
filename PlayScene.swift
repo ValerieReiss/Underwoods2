@@ -9,20 +9,14 @@ import Foundation
 import SpriteKit
 import simd
 
-enum CollisionType: UInt32 {
-    case player = 1
-    case bone = 2
-    case crystal = 4
-   
-}
 enum ColliderType: UInt32 {
     case player = 1
     case bone = 2
     case crystal = 4
 }
 
-class PlayScene: SKScene {
-    
+class PlayScene: SKScene, SKPhysicsContactDelegate {
+
     var crystalLabel: SKLabelNode!
     var boneLabel: SKLabelNode!
     var endLabel: SKLabelNode!
@@ -34,6 +28,7 @@ class PlayScene: SKScene {
     private var magicStick : SKEmitterNode?
     var background = Background()
     var player = Player()
+    var bone = Bone()
     var lastUpdateTime:TimeInterval = 0
     var dt:TimeInterval = 0
     var playableRectArea:CGRect = CGRectZero
@@ -81,8 +76,9 @@ class PlayScene: SKScene {
             self.background.move()
         }
         
-        _ = Timer.scheduledTimer(withTimeInterval: 3.0, repeats: true) { timer2 in
-            self.createBone()
+        _ = Timer.scheduledTimer(withTimeInterval: 5.0, repeats: true) { timer2 in
+            self.addChild(self.bone)
+            self.bone.move()
         }
         
         let jump = SKShapeNode(circleOfRadius: 100)
@@ -182,11 +178,20 @@ class PlayScene: SKScene {
         let contactMask = contact.bodyA.categoryBitMask | contact.bodyB.categoryBitMask
         
         if (contactMask == 3) // player - bone
-        {print ("bone")
+        {print ("....................................................bone")
             playerBones += 1
+            if contact.bodyA.node?.name == "bone" {
+                if let sparkleStars = SKEmitterNode(fileNamed: "particle-stars"){
+                                sparkleStars.particleTexture = SKTexture(imageNamed: "obBone0")
+                                sparkleStars.position = player.position
+                                sparkleStars.zPosition = 10
+                                addChild(sparkleStars)}
+                contact.bodyA.node?.removeFromParent()
+            }
+
         }
         else if (contactMask == 5) // player - crystal
-        {print ("crystal")
+        {print ("..................................................crystal")
             playerCrystals += 1
         }
     }
@@ -206,12 +211,14 @@ class PlayScene: SKScene {
         }
     
             
-    func createBone() {
+   /* func createBone() {
             randomBone = Int.random(in: 0..<6)
             let bone = SKSpriteNode(imageNamed: arrayBones[randomBone])
+        
+            let texture = SKTexture(imageNamed: arrayBones[randomBone])
                
             bone.zPosition = 3
-            bone.setScale(1)
+            bone.setScale(0.7)
             bone.name = "bone"
             bone.position = CGPoint( x: Int.random(in: 3000 ..< 6866),
                                      y: Int(self.frame.minY) + 500)
@@ -230,7 +237,7 @@ class PlayScene: SKScene {
             let sequence = SKAction.sequence([movement, .removeFromParent()])
             addChild(bone)
             bone.run (sequence)
-    }
+    }*/
 
     func end(){
         

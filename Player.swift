@@ -7,11 +7,11 @@
 
 import Foundation
 import SpriteKit
-
+/*
 struct PhysicsCategory {
     //static let None         : UInt32 = 0
     //static let All          : UInt32 = UInt32.max
-    static let Player       : UInt32 = 0x1 << 1
+    static let player       : UInt32 = 0x1 << 1
     static let Enemy        : UInt32 = 0x1 << 2
     static let Star         : UInt32 = 0x1 << 4
     static let Balloon      : UInt32 = 0x1 << 8
@@ -19,7 +19,7 @@ struct PhysicsCategory {
     static let create2      : UInt32 = 0x1 << 32
     static let create3      : UInt32 = 0x1 << 64
 }
-
+*/
 class Player: SKSpriteNode{
 
 init(){
@@ -43,9 +43,9 @@ init(){
     
     self.physicsBody?.isDynamic = true
     self.physicsBody?.affectedByGravity = true
-    self.physicsBody?.categoryBitMask = PhysicsCategory.Player
-    
-    self.physicsBody?.contactTestBitMask = CollisionType.bone.rawValue | CollisionType.crystal.rawValue 
+    self.physicsBody!.categoryBitMask = ColliderType.player.rawValue
+    self.physicsBody!.collisionBitMask = ColliderType.player.rawValue
+    self.physicsBody!.contactTestBitMask = ColliderType.bone.rawValue | ColliderType.crystal.rawValue
 }
 
 required init?(coder aDecoder: NSCoder) {

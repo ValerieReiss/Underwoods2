@@ -32,7 +32,6 @@ class GameScene: SKScene {
             let nodeTouched = atPoint(location)
             
             if nodeTouched.name == "Play" {
-                print ("passt")
                 self.view?.presentScene(PlayScene(size: self.size),
                                transition: .crossFade(withDuration: 2))
             }
