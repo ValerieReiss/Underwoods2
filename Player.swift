@@ -24,6 +24,9 @@ enum ColliderType: UInt32 {
 
 class Player: SKSpriteNode, SKPhysicsContactDelegate{
 
+    var normalPlayerPositionX = 1200
+    var normalPlayerPositionY = 400
+    
     init(){
     let texture = SKTexture(imageNamed: "player-front0")
     super.init(texture: texture, color: UIColor.clear, size: texture.size())
@@ -36,8 +39,8 @@ class Player: SKSpriteNode, SKPhysicsContactDelegate{
     self.physicsBody = body
     self.physicsBody?.allowsRotation = false
     
-    self.physicsBody?.isDynamic = true
-    self.physicsBody?.affectedByGravity = true
+    self.physicsBody?.isDynamic = false
+    self.physicsBody?.affectedByGravity = false
         
     self.setScale(1.4)
     self.physicsBody?.categoryBitMask = ColliderType.player.rawValue
@@ -51,18 +54,17 @@ required init?(coder aDecoder: NSCoder) {
     super.init(coder: aDecoder)
 }
 
-func boundsCheckPlayer(playableArea: CGRect){
-    if(self.position.x <= 900){self.position.x = 900}
-    if(self.position.x >= 1200){self.position.x = 1200}
-    if(self.position.y >= 600){self.position.y = 400}
+func boundsCheckPlayer(){
+    var normalPlayerPositionX = 1200
+    var normalPlayerPositionY = 400
+    if(self.position.x <= CGFloat(normalPlayerPositionX)){
+        self.position.x = CGFloat(normalPlayerPositionX)}
+    if(self.position.x >= CGFloat(normalPlayerPositionX)){
+        self.position.x = CGFloat(normalPlayerPositionX)}
+    if(self.position.y >= 600){
+        self.position.y = CGFloat(normalPlayerPositionY)}
 }
 
-func movePlayerBy(dxVectorValue: CGFloat, dyVectorValue: CGFloat, duration: TimeInterval)->(){
-
-    let moveActionVector = CGVectorMake(dxVectorValue, dyVectorValue)
-    let movePlayerAction = SKAction.applyForce(moveActionVector, duration: 0.001/duration)
-    self.run(movePlayerAction)
-}
 
 func stopMoving() {
     let player0 = SKTexture(imageNamed: "player0")
@@ -78,7 +80,7 @@ func moveRight(){
     let repeated = SKAction.repeatForever(animation)
     run(repeated)
 }
-
+/*
 func runRight(){
         let playerrun1 = SKTexture(imageNamed: "player-run1")
         let playerrun2 = SKTexture(imageNamed: "player-run2")
@@ -87,7 +89,7 @@ func runRight(){
         //let makePlayerRun = SKAction.repeatForever(animation)
         run(animation)
 }
-    
+*/
     func jump(){
         //let action = SKAction.setTexture(SKTexture(imageNamed: "player-jump"), resize: true)
         let playerjump = SKTexture(imageNamed: "player-jump")

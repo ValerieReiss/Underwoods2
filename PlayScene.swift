@@ -13,13 +13,11 @@ import simd
 class PlayScene: SKScene, SKPhysicsContactDelegate {
 
     var crystalLabel: SKLabelNode!
-    var boneLabel: SKLabelNode!
     var endLabel: SKLabelNode!
     let naviCrystal = SKSpriteNode(imageNamed: "obCrystal2")
     var playerCrystals = Int()
     let keyCrystals = "keyCrystals"
     
-    let naviBone = SKSpriteNode(imageNamed: "obBone0")
     var playerBones = 0
     
     var playerLevel = 0
@@ -30,7 +28,6 @@ class PlayScene: SKScene, SKPhysicsContactDelegate {
     var player = Player()
     
     var lastUpdateTime:TimeInterval = 0
-    var dt:TimeInterval = 0
     var playableRectArea:CGRect = CGRectZero
     var currentTouchPosition: CGPoint  = CGPointZero
     
@@ -84,12 +81,6 @@ class PlayScene: SKScene, SKPhysicsContactDelegate {
             self.player.wave()
         }
         
-        /*_ = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { timer2 in
-            self.player.moveRight()
-            self.background.move()
-        }*/
-        
-        
         _ = Timer.scheduledTimer(withTimeInterval: 13.0, repeats: true) { timer2 in
             self.bone.position = CGPoint(x: 2000, y: Int.random(in: 200..<250))
             self.randomBone = Int.random(in: 0..<6)
@@ -119,18 +110,6 @@ class PlayScene: SKScene, SKPhysicsContactDelegate {
         rechts.strokeColor = .init(white: 1.0, alpha: 1.0)
         rechts.setScale(2)
         self.addChild(rechts)*/
-        
-        naviBone.position = CGPoint(x: self.frame.maxX - 200, y: self.frame.maxY - 100)
-        naviBone.setScale(0.6)
-        naviBone.isUserInteractionEnabled = false
-        self.addChild(naviBone)
-        boneLabel = SKLabelNode(fontNamed: "Chalkduster")
-        boneLabel.position = CGPoint(x: self.frame.maxX - 350, y: self.frame.maxY - 150)
-        boneLabel.fontSize = 80
-        boneLabel.fontColor = .black
-        boneLabel.zPosition = 2
-        addChild(boneLabel)
-        boneLabel.text = "\(playerBones)"
         
         naviCrystal.position = CGPoint(x: self.frame.maxX - 200, y: self.frame.maxY - 250)
         naviCrystal.setScale(0.4)
@@ -180,12 +159,6 @@ class PlayScene: SKScene, SKPhysicsContactDelegate {
                 }
             }
             
-            if (nodeTouched.name == "rechts") {
-                zahl = 1
-                player.runRight()
-                background.run()
-
-            }
             
             if let n = self.magicStick?.copy() as! SKEmitterNode? {
                 n.position = currentTouchPosition
@@ -232,13 +205,9 @@ class PlayScene: SKScene, SKPhysicsContactDelegate {
         defaults.set(playerCrystals, forKey: keyCrystals)
         defaults.set(playerLevel, forKey: keyLevel)
         
-        
-            crystalLabel.text = "\(playerCrystals)"
-            boneLabel.text = "\(playerBones)"
-            if lastUpdateTime > 0 {dt = currentTime - lastUpdateTime}
-            else {dt = 0}
-            lastUpdateTime = currentTime
-        
+        crystalLabel.text = "\(playerCrystals)"
+            
+        player.boundsCheckPlayer()
         if background.endstation() == true {
             end()
         }
@@ -258,8 +227,6 @@ class PlayScene: SKScene, SKPhysicsContactDelegate {
         addChild(endLabel)
         endLabel.text = "Well Done!"
         
-        naviBone.position = CGPoint(x: self.frame.midX + 600, y: self.frame.midY)
-        boneLabel.position = CGPoint(x: self.frame.midX + 350, y: self.frame.midY - 60)
         
         naviCrystal.position = CGPoint(x: self.frame.midX + 600, y: self.frame.midY - 170)
         crystalLabel.position = CGPoint(x: self.frame.midX + 350, y: self.frame.midY - 210)

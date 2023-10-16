@@ -38,13 +38,6 @@ class GameScene: SKScene {
         backgroundImage.zPosition = -1
         addChild(backgroundImage)
         
-        crystalLabel = SKLabelNode(fontNamed: "Chalkduster")
-        crystalLabel.position = CGPoint(x: self.frame.maxX - 350, y: self.frame.maxY - 300)
-        crystalLabel.fontSize = 80
-        crystalLabel.fontColor = .black
-        crystalLabel.zPosition = 2
-        addChild(crystalLabel)
-        crystalLabel.text = "\(playerCrystals)"
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -53,7 +46,7 @@ class GameScene: SKScene {
             let nodeTouched = atPoint(location)
             
             if nodeTouched.name == "Play" {
-                self.view?.presentScene(PlayScene(size: self.size),
+                self.view?.presentScene(Menu(size: self.size),
                                transition: .crossFade(withDuration: 2))
             }
                 
@@ -78,8 +71,7 @@ class GameScene: SKScene {
         }
     
 	override func update(_ currentTime: TimeInterval) {
-        crystalLabel.text = "\(playerCrystals)"
-
+       
         let defaults = UserDefaults.standard
         defaults.set(playerCrystals, forKey: keyCrystals)
         defaults.set(playerLevel, forKey: keyLevel)

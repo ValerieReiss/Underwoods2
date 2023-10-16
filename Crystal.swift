@@ -43,7 +43,7 @@ class Crystal: SKSpriteNode, SKPhysicsContactDelegate{
         fatalError("rien compris")    }
     
     func move(){
-        let hin = SKAction.moveTo(x: 0, duration: 6.0)
+        let hin = SKAction.moveTo(x: 100, duration: 6.0)
         let sequence = SKAction.sequence([hin, .removeFromParent()])
         self.run (sequence)
         
