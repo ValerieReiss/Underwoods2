@@ -7,6 +7,7 @@
 
 import Foundation
 import SpriteKit
+import GameplayKit
 
 struct PhysicsCategory {
     static let player       : UInt32 = 0x1 << 1
@@ -21,7 +22,7 @@ enum ColliderType: UInt32 {
     case crystal = 4
 }
 
-class Player: SKSpriteNode{
+class Player: SKSpriteNode, SKPhysicsContactDelegate{
 
     init(){
     let texture = SKTexture(imageNamed: "player-front0")
@@ -37,11 +38,13 @@ class Player: SKSpriteNode{
     
     self.physicsBody?.isDynamic = true
     self.physicsBody?.affectedByGravity = true
+        
+    self.setScale(1.4)
     self.physicsBody?.categoryBitMask = ColliderType.player.rawValue
     self.physicsBody?.collisionBitMask = ColliderType.player.rawValue
     self.physicsBody?.contactTestBitMask = ColliderType.bone.rawValue | ColliderType.crystal.rawValue
         
-    self.setScale(1.4)
+    
 }
 
 required init?(coder aDecoder: NSCoder) {
@@ -56,7 +59,6 @@ func boundsCheckPlayer(playableArea: CGRect){
 
 func movePlayerBy(dxVectorValue: CGFloat, dyVectorValue: CGFloat, duration: TimeInterval)->(){
 
-    print("move player")
     let moveActionVector = CGVectorMake(dxVectorValue, dyVectorValue)
     let movePlayerAction = SKAction.applyForce(moveActionVector, duration: 0.001/duration)
     self.run(movePlayerAction)
@@ -73,7 +75,7 @@ func moveRight(){
     let player2 = SKTexture(imageNamed: "player2")
     let player3 = SKTexture(imageNamed: "player3")
     let animation = SKAction.animate(with: [player0, player2, player0, player3, player0], timePerFrame: 0.1)
-    let repeated = SKAction.repeat(animation, count: 1)
+    let repeated = SKAction.repeatForever(animation)
     run(repeated)
 }
 

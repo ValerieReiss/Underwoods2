@@ -7,12 +7,11 @@
 
 import Foundation
 import SpriteKit
+import GameplayKit
 
-class Bone: SKSpriteNode{
-    var randomBone = Int.random(in: 0..<6)
+class Bone: SKSpriteNode, SKPhysicsContactDelegate{
+    var randomBone = Int()
     let arrayBones = ["obBone0", "obBone1", "obBone2", "obBone3", "obBone4", "obBone5"]
-    
-   // var type: Int
     
     init(){
         let texture = SKTexture(imageNamed: arrayBones[randomBone])
@@ -23,7 +22,6 @@ class Bone: SKSpriteNode{
         
         self.physicsBody = SKPhysicsBody(texture: texture, size: texture.size())
         self.physicsBody?.allowsRotation = false
-        self.setScale(0.7)
         
         self.physicsBody?.isDynamic = true
         self.physicsBody?.affectedByGravity = false
@@ -31,7 +29,9 @@ class Bone: SKSpriteNode{
         self.physicsBody?.categoryBitMask  = ColliderType.bone.rawValue
         self.physicsBody?.collisionBitMask = ColliderType.bone.rawValue
         
+        self.setScale(0.7)
         self.position = CGPoint(x: 2000, y: Int.random(in: 200..<350))
+        
     }
     
     required init?(coder aDecoder: NSCoder) {

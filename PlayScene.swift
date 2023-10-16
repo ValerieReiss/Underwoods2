@@ -7,6 +7,7 @@
 
 import Foundation
 import SpriteKit
+import GameplayKit
 import simd
 
 class PlayScene: SKScene, SKPhysicsContactDelegate {
@@ -15,15 +16,19 @@ class PlayScene: SKScene, SKPhysicsContactDelegate {
     var boneLabel: SKLabelNode!
     var endLabel: SKLabelNode!
     let naviCrystal = SKSpriteNode(imageNamed: "obCrystal2")
-    var playerCrystals = 0
+    var playerCrystals = Int()
+    let keyCrystals = "keyCrystals"
+    
     let naviBone = SKSpriteNode(imageNamed: "obBone0")
     var playerBones = 0
     
+    var playerLevel = 0
+    let keyLevel = "keyLevel"
+    
     private var magicStick : SKEmitterNode?
-    var background = Background()
+    
     var player = Player()
-    var bone = Bone()
-    var crystal = Crystal()
+    
     var lastUpdateTime:TimeInterval = 0
     var dt:TimeInterval = 0
     var playableRectArea:CGRect = CGRectZero
@@ -33,18 +38,25 @@ class PlayScene: SKScene, SKPhysicsContactDelegate {
     var normalPlayerPositionX = 1200
     var normalPlayerPositionY = 400
     
+    var background = Background(type: 0)
     var endBackgroundPosition = CGFloat()
     
     var leftButtonIsPressed = false
     var rightButtonIsPressed = false
     var zahl = 0
     
+    var bone = Bone()
     let arrayBones = ["obBone0", "obBone1", "obBone2", "obBone3", "obBone4", "obBone5"]
+    var randomBone = Int()
+    
+    var crystal = Crystal()
+    var randomCrystal = Int()
     let arrayCrystals = ["obCrystal0", "obCrystal1", "obCrystal2", "obCrystal3", "obCrystal4", "obCrystal5", "obCrystal6", "obCrystal7"]
+    
     
     override func didMove(to view: SKView) {
       
-        //physicsWorld.contactDelegate = self
+        physicsWorld.contactDelegate = self
         scene?.physicsWorld.gravity = CGVectorMake(0,0)
         
         self.magicStick = SKEmitterNode(fileNamed: "MyParticle.sks")
@@ -53,30 +65,40 @@ class PlayScene: SKScene, SKPhysicsContactDelegate {
             magicStick.run(SKAction.sequence([SKAction.fadeOut(withDuration: 0.5), SKAction.removeFromParent()]))
         }
         
-        //backgroundImage.name = "bgMoving"
+        
+        let userDefaults = UserDefaults.standard
+        playerCrystals = userDefaults.integer(forKey: keyCrystals)
+        playerLevel = userDefaults.integer(forKey: keyLevel)
+        userDefaults.synchronize()
+        
         background.position = CGPointMake(self.frame.minX+17165, self.frame.midY) //19560
         background.size = CGSize(width: 34330, height: self.size.height)
         addChild(background)
+        background.move()
         endBackgroundPosition = 17165 //31500    //CGFloat(-17165.0 + self.frame.width)
      
         player.position = CGPoint(x: self.frame.midX - 200, y: self.frame.minY + 400)
         self.addChild(player)
+        player.moveRight()
         _ = Timer.scheduledTimer(withTimeInterval: 8.2, repeats: true) { timer2 in
             self.player.wave()
         }
         
-        _ = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { timer2 in
+        /*_ = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { timer2 in
             self.player.moveRight()
             self.background.move()
-        }
+        }*/
         
-        _ = Timer.scheduledTimer(withTimeInterval: 8.0, repeats: true) { timer2 in
-            self.bone.position = CGPoint(x: 2000, y: Int.random(in: 200..<350))
+        
+        _ = Timer.scheduledTimer(withTimeInterval: 13.0, repeats: true) { timer2 in
+            self.bone.position = CGPoint(x: 2000, y: Int.random(in: 200..<250))
+            self.randomBone = Int.random(in: 0..<6)
             self.addChild(self.bone)
             self.bone.move()
         }
         _ = Timer.scheduledTimer(withTimeInterval: 9.0, repeats: true) { timer2 in
-            self.crystal.position = CGPoint(x: 2000, y: Int.random(in: 1150..<1250))
+            self.crystal.position = CGPoint(x: 2000, y: Int.random(in: 850..<950))
+            self.randomCrystal = Int.random(in: 0..<8)
             self.addChild(self.crystal)
             self.crystal.move()
         }
@@ -84,18 +106,19 @@ class PlayScene: SKScene, SKPhysicsContactDelegate {
         let jump = SKShapeNode(circleOfRadius: 100)
         jump.name = "jump"
         jump.zPosition = 6
-        jump.position = CGPoint(x: self.frame.midX-1050, y: self.frame.midY-280)
+        jump.position = CGPoint(x: self.frame.midX+1050, y: self.frame.midY-280)
+        //jump.position = CGPoint(x: self.frame.midX-1050, y: self.frame.midY-280)
         jump.strokeColor = .init(white: 1.0, alpha: 1.0)
         jump.setScale(2)
         self.addChild(jump)
                 
-        let rechts = SKShapeNode(circleOfRadius: 100)
+        /*let rechts = SKShapeNode(circleOfRadius: 100)
         rechts.name = "rechts"
         rechts.zPosition = 6
         rechts.position = CGPoint(x: self.frame.midX+1050, y: self.frame.midY-280)
         rechts.strokeColor = .init(white: 1.0, alpha: 1.0)
         rechts.setScale(2)
-        self.addChild(rechts)
+        self.addChild(rechts)*/
         
         naviBone.position = CGPoint(x: self.frame.maxX - 200, y: self.frame.maxY - 100)
         naviBone.setScale(0.6)
@@ -132,9 +155,6 @@ class PlayScene: SKScene, SKPhysicsContactDelegate {
             currentTouchPosition = touch.location(in: self)
             let nodeTouched = atPoint(currentTouchPosition)
             
-            if nodeTouched.name == "button1" {
-                print ("Buttoooooon")
-            }
             if nodeTouched.name == "Menu" {
                         self.view?.presentScene(GameScene(size: self.size),
                        transition: .crossFade(withDuration: 2))
@@ -179,25 +199,40 @@ class PlayScene: SKScene, SKPhysicsContactDelegate {
         
         if (contactMask == 3) // player - bone
         {print ("....................................................bone")
+            run("sound-button")
             playerBones += 1
             if contact.bodyA.node?.name == "bone" {
                 if let sparkleStars = SKEmitterNode(fileNamed: "particle-stars"){
-                                sparkleStars.particleTexture = SKTexture(imageNamed: "obBone0")
-                                sparkleStars.position = player.position
-                                sparkleStars.zPosition = 10
-                                addChild(sparkleStars)}
+                    sparkleStars.particleTexture = SKTexture(imageNamed: "obBone0")
+                    sparkleStars.position = player.position
+                    sparkleStars.zPosition = 10
+                    addChild(sparkleStars)}
                 contact.bodyA.node?.removeFromParent()
-            }
-
+            } else { contact.bodyB.node?.removeFromParent() }
+            
         }
         else if (contactMask == 5) // player - crystal
         {print ("..................................................crystal")
+            run("sound-Coin")
             playerCrystals += 1
+            if contact.bodyA.node?.name == "crystal" {
+                if let sparkleStars = SKEmitterNode(fileNamed: "particle-stars"){
+                    sparkleStars.particleTexture = SKTexture(imageNamed: "obBone0")
+                    sparkleStars.position = player.position
+                    sparkleStars.zPosition = 10
+                    addChild(sparkleStars)}
+                contact.bodyA.node?.removeFromParent()
+            }
         }
     }
     
     
     override func update(_ currentTime: CFTimeInterval) {
+        let defaults = UserDefaults.standard
+        defaults.set(playerCrystals, forKey: keyCrystals)
+        defaults.set(playerLevel, forKey: keyLevel)
+        
+        
             crystalLabel.text = "\(playerCrystals)"
             boneLabel.text = "\(playerBones)"
             if lastUpdateTime > 0 {dt = currentTime - lastUpdateTime}
@@ -208,36 +243,8 @@ class PlayScene: SKScene, SKPhysicsContactDelegate {
             end()
         }
         
-        }
+    }
     
-            
-   /* func createBone() {
-            randomBone = Int.random(in: 0..<6)
-            let bone = SKSpriteNode(imageNamed: arrayBones[randomBone])
-        
-            let texture = SKTexture(imageNamed: arrayBones[randomBone])
-               
-            bone.zPosition = 3
-            bone.setScale(0.7)
-            bone.name = "bone"
-            bone.position = CGPoint( x: Int.random(in: 3000 ..< 6866),
-                                     y: Int(self.frame.minY) + 500)
-                
-            bone.physicsBody = SKPhysicsBody(texture: bone.texture!, size: bone.texture!.size())
-            bone.physicsBody?.contactTestBitMask = ColliderType.player.rawValue
-            bone.physicsBody?.categoryBitMask  = ColliderType.bone.rawValue
-            bone.physicsBody?.collisionBitMask = ColliderType.bone.rawValue
-        
-            bone.position = CGPoint(x: Int(self.frame.maxX), y: Int(self.frame.minY) + Int.random(in: 200..<350))
-                
-            let path = UIBezierPath()
-            path.move(to: .zero)
-            path.addLine(to: CGPoint(x:-Int(self.frame.maxX), y: 0))
-            let movement = SKAction.follow(path.cgPath, asOffset: true, orientToPath: true, speed: 70)
-            let sequence = SKAction.sequence([movement, .removeFromParent()])
-            addChild(bone)
-            bone.run (sequence)
-    }*/
 
     func end(){
         

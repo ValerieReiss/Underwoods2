@@ -9,10 +9,13 @@ import Foundation
 import SpriteKit
 
 class Background: SKSpriteNode{
+    let arrayBackgrounds = ["bgMoving", "bgMoving1", "bgMoving2"]
     
-    init(){
+        var type: Int
+    init(type: Int){
+        self.type = type
         
-        let texture = SKTexture(imageNamed: "bgMoving")
+        let texture = SKTexture(imageNamed: arrayBackgrounds[type])
         
         super.init(texture: texture, color: UIColor.clear, size: texture.size())
         
@@ -27,17 +30,17 @@ class Background: SKSpriteNode{
         self.physicsBody = body
         self.physicsBody?.allowsRotation = false
         
-        self.physicsBody?.isDynamic = true
+        self.physicsBody?.isDynamic = false
         self.physicsBody?.affectedByGravity = false
     }
     
     required init?(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder)
-    }
+            fatalError("rien compris")
+        }
     
     func move(){
-       // let move = SKAction.moveTo(x: self.position.x-31500, duration: 50)
-        let move = SKAction.moveTo(x: self.position.x-200, duration: 0.5)
+        let move = SKAction.moveTo(x: self.position.x-31500, duration: 80)
+        //let move = SKAction.moveTo(x: self.position.x-200, duration: 0.5)
         run(move)
     }
     
