@@ -44,10 +44,11 @@ class PlayScene: SKScene, SKPhysicsContactDelegate {
     
     var bone = Bone()
     let arrayBones = ["obBone0", "obBone1", "obBone2", "obBone3", "obBone4", "obBone5"]
+    let keyBones = "keyBones"
     var randomBone = Int()
     
-    var crystal = Crystal()
     var randomCrystal = Int()
+    var crystal = Crystal(type: 0)
     let arrayCrystals = ["obCrystal0", "obCrystal1", "obCrystal2", "obCrystal3", "obCrystal4", "obCrystal5", "obCrystal6", "obCrystal7"]
     
     
@@ -66,6 +67,7 @@ class PlayScene: SKScene, SKPhysicsContactDelegate {
         let userDefaults = UserDefaults.standard
         playerCrystals = userDefaults.integer(forKey: keyCrystals)
         playerLevel = userDefaults.integer(forKey: keyLevel)
+        playerBones = userDefaults.integer(forKey: keyBones)
         userDefaults.synchronize()
         
         background.position = CGPointMake(self.frame.minX+17165, self.frame.midY) //19560
@@ -81,7 +83,7 @@ class PlayScene: SKScene, SKPhysicsContactDelegate {
             self.player.wave()
         }
         
-        _ = Timer.scheduledTimer(withTimeInterval: 13.0, repeats: true) { timer2 in
+        _ = Timer.scheduledTimer(withTimeInterval: 15.0, repeats: true) { timer2 in
             self.bone.position = CGPoint(x: 2000, y: Int.random(in: 200..<250))
             self.randomBone = Int.random(in: 0..<6)
             self.addChild(self.bone)
@@ -90,6 +92,7 @@ class PlayScene: SKScene, SKPhysicsContactDelegate {
         _ = Timer.scheduledTimer(withTimeInterval: 9.0, repeats: true) { timer2 in
             self.crystal.position = CGPoint(x: 2000, y: Int.random(in: 850..<950))
             self.randomCrystal = Int.random(in: 0..<8)
+            self.crystal = Crystal(type: self.randomCrystal)
             self.addChild(self.crystal)
             self.crystal.move()
         }
@@ -204,7 +207,7 @@ class PlayScene: SKScene, SKPhysicsContactDelegate {
         let defaults = UserDefaults.standard
         defaults.set(playerCrystals, forKey: keyCrystals)
         defaults.set(playerLevel, forKey: keyLevel)
-        
+        defaults.set(playerBones, forKey: keyBones)
         crystalLabel.text = "\(playerCrystals)"
             
         player.boundsCheckPlayer()

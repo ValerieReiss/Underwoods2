@@ -11,6 +11,7 @@ import GameplayKit
 
 class Bone: SKSpriteNode, SKPhysicsContactDelegate{
     var randomBone = Int()
+    var playerBones = Int()
     let arrayBones = ["obBone0", "obBone1", "obBone2", "obBone3", "obBone4", "obBone5"]
     
     init(){
@@ -42,4 +43,28 @@ class Bone: SKSpriteNode, SKPhysicsContactDelegate{
         let sequence = SKAction.sequence([hin, .removeFromParent()])
         self.run (sequence)
     }
+    
+    func blink(){
+        let dicker = SKAction.scale(to: 0.3, duration: 0.5)
+        let dunner = SKAction.scale(to: 0.2, duration: 0.3)
+        let aufdicken = SKAction.sequence([dicker, dunner])
+        self.run(SKAction.repeatForever(aufdicken))
+
+        let aus = SKAction.fadeOut(withDuration: 0.5)
+        let an = SKAction.fadeIn(withDuration: 0.5)
+        let blink = SKAction.sequence([an, aus, an, aus, an, aus, an])
+        self.run(SKAction.repeatForever(blink))
+    }
+    
+    func checkForBones() {
+            enumerateChildNodes(withName: "powerup") { node, _ in
+                let bone = node as! SKSpriteNode
+                if bone.frame.intersects(self.frame) {
+                    self.playerBones += 1
+                    if self.playerBones == 6{
+                        self.playerBones -= 1 }
+                    bone.removeFromParent()
+                }
+            }
+        }
 }

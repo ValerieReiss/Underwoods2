@@ -22,6 +22,9 @@ class Menu: SKScene {
     var playerLevel = 0
     let keyLevel = "keyLevel"
     
+    var bone = Bone()
+    let keyBones = "keyBones"
+    var playerBones = Int()
     let arrayBones = ["obBone0", "obBone1", "obBone2", "obBone3", "obBone4", "obBone5"]
     
     override func didMove(to view: SKView) {
@@ -34,6 +37,7 @@ class Menu: SKScene {
         let userDefaults = UserDefaults.standard
         playerCrystals = userDefaults.integer(forKey: keyCrystals)
         playerLevel = userDefaults.integer(forKey: keyLevel)
+        playerBones = userDefaults.integer(forKey: keyBones)
         userDefaults.synchronize()
 
         backgroundImage.name = "Play"
@@ -160,7 +164,9 @@ class Menu: SKScene {
         let defaults = UserDefaults.standard
         defaults.set(playerCrystals, forKey: keyCrystals)
         defaults.set(playerLevel, forKey: keyLevel)
+        defaults.set(playerBones, forKey: keyBones)
         
+        bone.checkForBones()
     }
 
 

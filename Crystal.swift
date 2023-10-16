@@ -10,13 +10,14 @@ import SpriteKit
 import GameplayKit
 
 class Crystal: SKSpriteNode, SKPhysicsContactDelegate{
-    var randomCrystal = Int.random(in: 0..<8)
+    //var randomCrystal = Int.random(in: 0..<8)
     let arrayCrystals = ["obCrystal0", "obCrystal1", "obCrystal2", "obCrystal3", "obCrystal4", "obCrystal5", "obCrystal6", "obCrystal7"]
     
-   // var type: Int
+    var type: Int
     
-    init(){
-        let texture = SKTexture(imageNamed: arrayCrystals[randomCrystal])
+    init(type: Int){
+        self.type = type
+        let texture = SKTexture(imageNamed: arrayCrystals[type])
         super.init(texture: texture, color: .white, size: texture.size())
         
         self.name = "crystal"
