@@ -44,7 +44,7 @@ class Menu: SKScene {
     override func didMove(to view: SKView) {
         self.magicStick = SKEmitterNode(fileNamed: "MyParticle.sks")
         if let magicStick = self.magicStick {
-            magicStick.particleTexture = SKTexture(imageNamed: "magicstick.png")
+            magicStick.particleTexture = SKTexture(imageNamed: "obBone3.png")
             magicStick.run(SKAction.sequence([SKAction.fadeOut(withDuration: 0.5), SKAction.removeFromParent()]))
                 }
 
@@ -176,13 +176,12 @@ class Menu: SKScene {
         buttonLevel1.position = CGPoint(x: self.frame.midX, y: self.frame.minY + self.size.height/4)
         buttonLevel1.name = "buttonLevel1"
         buttonLevel1.setScale(1.6)
-        buttonLevel1.zPosition = 6
+        buttonLevel1.zPosition = 1
         self.addChild(buttonLevel1)
         
         buttonLevel1on.position = CGPoint(x: self.frame.midX, y: self.frame.minY + self.size.height/4)
-        buttonLevel1on.name = "buttonLevel1"
         buttonLevel1on.setScale(1.6)
-        buttonLevel1on.zPosition = 6
+        buttonLevel1on.zPosition = 8
         buttonLevel1on.alpha = 0.0
         self.addChild(buttonLevel1on)
         /*
@@ -212,7 +211,10 @@ class Menu: SKScene {
             if nodeTouched.name == "buttonLevel1" {
                 run("sound-button")
                 playerLevel = 1
-                buttonLevel1on.alpha = 1.0
+                let fadein = SKAction.fadeAlpha(to: 1.0, duration: 0.3)
+                let fadeout = SKAction.fadeAlpha(to: 0.0, duration: 0.3)
+                let seq = SKAction.sequence([fadein, fadeout])
+                buttonLevel1on.run(seq)
                 let defaults = UserDefaults.standard
                 defaults.set(1, forKey: keyLevel)
                 self.view?.presentScene(PlayScene(size: self.size),

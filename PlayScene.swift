@@ -59,7 +59,7 @@ class PlayScene: SKScene, SKPhysicsContactDelegate {
         
         self.magicStick = SKEmitterNode(fileNamed: "MyParticle.sks")
         if let magicStick = self.magicStick {
-            magicStick.particleTexture = SKTexture(imageNamed: "magicstick.png")
+            magicStick.particleTexture = SKTexture(imageNamed: "obBone3.png")
             magicStick.run(SKAction.sequence([SKAction.fadeOut(withDuration: 0.5), SKAction.removeFromParent()]))
         }
         
@@ -170,6 +170,19 @@ class PlayScene: SKScene, SKPhysicsContactDelegate {
         }
     }
      
+    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+            for touch: AnyObject in touches {
+                        let endTouch = touch.location(in:self)
+                    }
+                guard var touch = touches.first else {return}
+                touch = (touches.first as UITouch?)!
+                let location = touch.location(in:self)
+                if let n = self.magicStick?.copy() as! SKEmitterNode? {
+                    n.position = location
+                    self.addChild(n)
+                }
+        }
+    
     func didBegin(_ contact: SKPhysicsContact){
         let contactMask = contact.bodyA.categoryBitMask | contact.bodyB.categoryBitMask
         

@@ -23,7 +23,7 @@ class GameScene: SKScene {
     override func didMove(to view: SKView) {
         self.magicStick = SKEmitterNode(fileNamed: "MyParticle.sks")
         if let magicStick = self.magicStick {
-            magicStick.particleTexture = SKTexture(imageNamed: "magicstick.png")
+            magicStick.particleTexture = SKTexture(imageNamed: "obBone3.png")
             magicStick.run(SKAction.sequence([SKAction.fadeOut(withDuration: 0.5), SKAction.removeFromParent()]))
                 }
 
