@@ -26,6 +26,7 @@ class Menu: SKScene {
     let keyBones = "keyBones"
     var playerBones = Int()
     let arrayBones = ["obBone0", "obBone1", "obBone2", "obBone3", "obBone4", "obBone5"]
+    let arrayBonesgrey = ["bone0grey", "bone1grey", "bone2grey", "bone3grey", "bone4grey", "bone5grey"]
     
     override func didMove(to view: SKView) {
         self.magicStick = SKEmitterNode(fileNamed: "MyParticle.sks")
@@ -62,32 +63,51 @@ class Menu: SKScene {
         bone0.position = CGPoint(x: self.frame.midX - 1000, y: self.frame.minY + 800)
         bone0.setScale(0.9)
         addChild(bone0)
-        
         let bone1 = SKSpriteNode(imageNamed: arrayBones[1])
         bone1.position = CGPoint(x: self.frame.midX - 600, y: self.frame.minY + 800)
         bone1.setScale(0.9)
         addChild(bone1)
-        
         let bone2 = SKSpriteNode(imageNamed: arrayBones[4])
         bone2.position = CGPoint(x: self.frame.midX - 200, y: self.frame.minY + 800)
         bone2.setScale(0.9)
         addChild(bone2)
-        
         let bone3 = SKSpriteNode(imageNamed: arrayBones[5])
         bone3.position = CGPoint(x: self.frame.midX + 200, y: self.frame.minY + 800)
         bone3.setScale(0.8)
         addChild(bone3)
-        
         let bone4 = SKSpriteNode(imageNamed: arrayBones[2])
         bone4.position = CGPoint(x: self.frame.midX + 600, y: self.frame.minY + 800)
         bone4.setScale(0.8)
-        bone4.color = .systemMint
         addChild(bone4)
-        
         let bone5 = SKSpriteNode(imageNamed: arrayBones[3])
         bone5.position = CGPoint(x: self.frame.midX + 1000, y: self.frame.minY + 800)
         bone5.setScale(0.9)
         addChild(bone5)
+        
+        let bone0grey = SKSpriteNode(imageNamed: arrayBonesgrey[0])
+        bone0grey.position = CGPoint(x: self.frame.midX - 1000, y: self.frame.minY + 800)
+        bone0grey.setScale(0.9)
+        addChild(bone0)
+        let bone1grey = SKSpriteNode(imageNamed: arrayBonesgrey[1])
+        bone1grey.position = CGPoint(x: self.frame.midX - 600, y: self.frame.minY + 800)
+        bone1grey.setScale(0.9)
+        addChild(bone1grey)
+        let bone2grey = SKSpriteNode(imageNamed: arrayBonesgrey[4])
+        bone2grey.position = CGPoint(x: self.frame.midX - 200, y: self.frame.minY + 800)
+        bone2grey.setScale(0.9)
+        addChild(bone2grey)
+        let bone3grey = SKSpriteNode(imageNamed: arrayBonesgrey[5])
+        bone3grey.position = CGPoint(x: self.frame.midX + 200, y: self.frame.minY + 800)
+        bone3grey.setScale(0.8)
+        addChild(bone3grey)
+        let bone4grey = SKSpriteNode(imageNamed: arrayBonesgrey[2])
+        bone4grey.position = CGPoint(x: self.frame.midX + 600, y: self.frame.minY + 800)
+        bone4grey.setScale(0.8)
+        addChild(bone4grey)
+        let bone5grey = SKSpriteNode(imageNamed: arrayBonesgrey[3])
+        bone5grey.position = CGPoint(x: self.frame.midX + 1000, y: self.frame.minY + 800)
+        bone5grey.setScale(0.9)
+        addChild(bone5grey)
         
         let buttonLevel0 = SKShapeNode(rectOf: CGSize(width: 400, height: 400))
         buttonLevel0.position = CGPoint(x: self.frame.midX - 600, y: self.frame.minY + 400)
