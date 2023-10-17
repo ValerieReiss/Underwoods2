@@ -60,26 +60,33 @@ class Menu: SKScene {
         
         let bone0 = SKSpriteNode(imageNamed: arrayBones[0])
         bone0.position = CGPoint(x: self.frame.midX - 1000, y: self.frame.minY + 800)
+        bone0.setScale(0.9)
         addChild(bone0)
         
         let bone1 = SKSpriteNode(imageNamed: arrayBones[1])
         bone1.position = CGPoint(x: self.frame.midX - 600, y: self.frame.minY + 800)
+        bone1.setScale(0.9)
         addChild(bone1)
         
-        let bone2 = SKSpriteNode(imageNamed: arrayBones[2])
+        let bone2 = SKSpriteNode(imageNamed: arrayBones[4])
         bone2.position = CGPoint(x: self.frame.midX - 200, y: self.frame.minY + 800)
+        bone2.setScale(0.9)
         addChild(bone2)
         
-        let bone3 = SKSpriteNode(imageNamed: arrayBones[3])
+        let bone3 = SKSpriteNode(imageNamed: arrayBones[5])
         bone3.position = CGPoint(x: self.frame.midX + 200, y: self.frame.minY + 800)
+        bone3.setScale(0.8)
         addChild(bone3)
         
-        let bone4 = SKSpriteNode(imageNamed: arrayBones[4])
+        let bone4 = SKSpriteNode(imageNamed: arrayBones[2])
         bone4.position = CGPoint(x: self.frame.midX + 600, y: self.frame.minY + 800)
+        bone4.setScale(0.8)
+        bone4.color = .systemMint
         addChild(bone4)
         
-        let bone5 = SKSpriteNode(imageNamed: arrayBones[5])
+        let bone5 = SKSpriteNode(imageNamed: arrayBones[3])
         bone5.position = CGPoint(x: self.frame.midX + 1000, y: self.frame.minY + 800)
+        bone5.setScale(0.9)
         addChild(bone5)
         
         let buttonLevel0 = SKShapeNode(rectOf: CGSize(width: 400, height: 400))
