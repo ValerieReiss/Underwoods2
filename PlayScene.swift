@@ -63,6 +63,7 @@ class PlayScene: SKScene, SKPhysicsContactDelegate {
             magicStick.run(SKAction.sequence([SKAction.fadeOut(withDuration: 0.5), SKAction.removeFromParent()]))
         }
         
+        run("bgMusicLevel1")
         
         let userDefaults = UserDefaults.standard
         playerCrystals = userDefaults.integer(forKey: keyCrystals)
@@ -75,6 +76,19 @@ class PlayScene: SKScene, SKPhysicsContactDelegate {
         addChild(background)
         background.move()
         endBackgroundPosition = 17165 //31500    //CGFloat(-17165.0 + self.frame.width)
+        
+/*bone*/ DispatchQueue.main.asyncAfter(deadline: .now() + 15) {
+            self.bone.position = CGPoint(x: 2000, y: Int.random(in: 200..<250))
+            self.randomBone = Int.random(in: 0..<6)
+            self.addChild(self.bone)
+            self.bone.move()
+        }
+/*bone2*/ DispatchQueue.main.asyncAfter(deadline: .now() + 50) {
+            self.bone.position = CGPoint(x: 2000, y: Int.random(in: 200..<250))
+            self.randomBone = Int.random(in: 0..<6)
+            self.addChild(self.bone)
+            self.bone.move()
+        }
      
         player.position = CGPoint(x: self.frame.midX - 200, y: self.frame.minY + 400)
         self.addChild(player)
@@ -83,13 +97,7 @@ class PlayScene: SKScene, SKPhysicsContactDelegate {
             self.player.wave()
         }
         
-        _ = Timer.scheduledTimer(withTimeInterval: 15.0, repeats: true) { timer2 in
-            self.bone.position = CGPoint(x: 2000, y: Int.random(in: 200..<250))
-            self.randomBone = Int.random(in: 0..<6)
-            self.addChild(self.bone)
-            self.bone.move()
-        }
-        _ = Timer.scheduledTimer(withTimeInterval: 9.0, repeats: true) { timer2 in
+        _ = Timer.scheduledTimer(withTimeInterval: 7.0, repeats: true) { timer2 in
             self.crystal.position = CGPoint(x: 2000, y: Int.random(in: 850..<950))
             self.randomCrystal = Int.random(in: 0..<8)
             self.crystal = Crystal(type: self.randomCrystal)
@@ -188,7 +196,7 @@ class PlayScene: SKScene, SKPhysicsContactDelegate {
         
         if (contactMask == 3) // player - bone
         {print ("....................................................bone")
-            run("sound-button")
+            //run("sound-button")
             playerBones += 1
             if contact.bodyA.node?.name == "bone" {
                 if let sparkleStars = SKEmitterNode(fileNamed: "particle-stars"){
@@ -202,7 +210,7 @@ class PlayScene: SKScene, SKPhysicsContactDelegate {
         }
         else if (contactMask == 5) // player - crystal
         {print ("..................................................crystal")
-            run("sound-Coin")
+            run("sound-intro")
             playerCrystals += 1
             if contact.bodyA.node?.name == "crystal" {
                 if let sparkleStars = SKEmitterNode(fileNamed: "particle-stars"){
@@ -232,7 +240,7 @@ class PlayScene: SKScene, SKPhysicsContactDelegate {
     
 
     func end(){
-        
+        //run("sound-won")
         player.stopMoving()
         player.won()
         endLabel = SKLabelNode(fontNamed: "Chalkduster")
@@ -247,21 +255,29 @@ class PlayScene: SKScene, SKPhysicsContactDelegate {
         naviCrystal.position = CGPoint(x: self.frame.midX + 600, y: self.frame.midY - 170)
         crystalLabel.position = CGPoint(x: self.frame.midX + 350, y: self.frame.midY - 210)
         
+        DispatchQueue.main.asyncAfter(deadline: .now() + 10) {
+            self.view?.presentScene(Menu(size: self.size),
+           transition: .crossFade(withDuration: 1))
+            self.run("sound-button")
+        }
         
-        if playerCrystals > playerBones {
-            if let crystalregen = SKEmitterNode(fileNamed: "particle-geldregen"){
+        if let crystalregen = SKEmitterNode(fileNamed: "particle-geldregen"){
                 crystalregen.position = CGPoint(x: self.frame.maxX - 400, y: self.frame.maxY + 300)
                 addChild(crystalregen)
-            }
-            if let crystalregen2 = SKEmitterNode(fileNamed: "particle-geldregen"){
+            
+            let wait = SKAction.wait(forDuration: 4)
+            let seq = SKAction.sequence([wait, .removeFromParent()])
+            run(seq)
+        }
+        if let crystalregen2 = SKEmitterNode(fileNamed: "particle-geldregen"){
                 crystalregen2.position = CGPoint(x: self.frame.minX + 400, y: self.frame.maxY + 300)
                 addChild(crystalregen2)
-            }
-            _ = Timer.scheduledTimer(withTimeInterval: 2.0, repeats: true) { timer2 in
-                self.player.won()
-            }
-            run("sound-won")
         }
+        _ = Timer.scheduledTimer(withTimeInterval: 2.0, repeats: true) { timer2 in
+                self.player.won()
+        }
+            
+        /*
         if playerBones > playerCrystals {
             if let boneregen = SKEmitterNode(fileNamed: "particle-geldregen"){
                     boneregen.particleTexture = SKTexture(imageNamed: "obBone2")
@@ -277,10 +293,10 @@ class PlayScene: SKScene, SKPhysicsContactDelegate {
                 self.player.won() //self.player.wave()
             }
             run("sound-won")
-        }
-        if playerBones == 0 && playerCrystals == 0 {
+        }*/
+        /*if playerBones == 0 && playerCrystals == 0 {
             endLabel.alpha = 0.0
-        }
+        }*/
         
     }
     

@@ -39,7 +39,7 @@ class Background: SKSpriteNode{
         }
     
     func move(){
-        let move = SKAction.moveTo(x: self.position.x-31500, duration: 80)
+        let move = SKAction.moveTo(x: self.position.x-31500, duration: 95)
         //let move = SKAction.moveTo(x: self.position.x-200, duration: 0.5)
         run(move)
     }

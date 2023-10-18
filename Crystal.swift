@@ -37,7 +37,7 @@ class Crystal: SKSpriteNode, SKPhysicsContactDelegate{
         self.physicsBody?.collisionBitMask = ColliderType.crystal.rawValue
 
        
-        self.position = CGPoint(x: 2000, y: Int.random(in: 900..<1150))
+        self.position = CGPoint(x: 2000, y: Int.random(in: 870..<1200))
     }
     
     required init?(coder aDecoder: NSCoder) {
